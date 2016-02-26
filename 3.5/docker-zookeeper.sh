@@ -23,25 +23,109 @@
 
 # USE the trap if you need to also do manual cleanup after the service is stopped,
 #     or need to start multiple services in the one container
+
+if ! OPTS=$(getopt -n $0 -o "" -l "seed:" -l "ip:" -l "clientport:" -l "peerport:" -l "electionport:" -l "role:" -l "clientip:" -l "confdir:" -l "datadir:" -l "foreground" -- "$@" 2>/dev/null); then
+  exit 1
+fi
+
+# check options
+eval set -- "${OPTS}"
+while true; do
+  case "$1" in
+    --seed)
+      SEED=$2; shift 2
+      ;;
+    --ip)
+      IP=$2; shift 2
+      ;;
+    --clientport)
+      CLIENT_PORT=$2; shift 2
+      ;;
+    --peerport)
+      PEER_PORT=$2; shift 2
+      ;;
+    --electionport)
+      ELECTION_PORT=$2; shift 2
+      ;;
+    --role)
+      ROLE=$2; shift 2
+      ;;
+    --clientip)
+      CLIENT_IP=$2; shift 2
+      ;;
+    --confdir)
+      ZOOCFGDIR=$2; shift 2
+      ;;
+    --datadir)
+      ZOO_DATADIR=$2; shift 2
+      ;;
+    --foreground)
+      FOREGROUND=1; shift 1
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "unknown option: $1"
+      exit 1
+      ;;
+  esac
+done
+
+# create start options
+START_OPTS=""
+if [ -n "${SEED}" ]; then
+  START_OPTS="${START_OPTS} --seed=${SEED}"
+fi
+if [ -n "${IP}" ]; then
+  START_OPTS="${START_OPTS} --ip=${IP}"
+fi
+if [ -n "${CLIENT_PORT}" ]; then
+  START_OPTS="${START_OPTS} --clientport=${CLIENT_PORT}"
+fi
+if [ -n "${PEER_PORT}" ]; then
+  START_OPTS="${START_OPTS} --peerport=${PEER_PORT}"
+fi
+if [ -n "${ELECTION_PORT}" ]; then
+  START_OPTS="${START_OPTS} --electionport=${ELECTION_PORT}"
+fi
+if [ -n "${ROLE}" ]; then
+  START_OPTS="${START_OPTS} --role=${ROLE}"
+fi
+if [ -n "${CLIENT_IP}" ]; then
+  START_OPTS="${START_OPTS} --clientip=${CLIENT_IP}"
+fi
+if [ -n "${ZOOCFGDIR}" ]; then
+  START_OPTS="${START_OPTS} --confdir=${ZOOCFGDIR}"
+fi
+if [ -n "${ZOO_DATADIR}" ]; then
+  START_OPTS="${START_OPTS} --datadir=${ZOO_DATADIR}"
+fi
+if [ ${FOREGROUND} -eq 1 ]; then
+  START_OPTS="${START_OPTS} --foreground"
+fi
+
+# create stop options
+STOP_OPTS=""
+if [ -n "${IP}" ]; then
+  STOP_OPTS="${STOP_OPTS} --ip=${IP}"
+fi
+if [ -n "${CLIENT_PORT}" ]; then
+  STOP_OPTS="${STOP_OPTS} --clientport=${CLIENT_PORT}"
+fi
+
 trap "echo TRAPed signal" HUP INT QUIT KILL TERM
 
 # start service in background here
 echo "Starting ZooKeeper"
-./bin/zkEnsemble.sh start --seed=172.24.230.16:2181 \
-                          --ip=127.0.0.1 \
-                          --clientport=2181 \
-                          --peerport=2888 \
-                          --electionport=3888 \
-                          --role=participant \
-                          --clientport=2181 \
-                          --confdir=/opt/zookeeper/conf \
-                          --datadir=/opt/zookeeper/data
+./bin/zkEnsemble.sh start ${START_OPTS}
 
 echo "[hit enter key to exit] or run 'docker stop <container>'"
 read
 
 # stop service and clean up here
 echo "Stopping ZooKeeper"
-./bin/zkEnsemble.sh stop --ip=172.24.230.16 --clientport=2181
+./bin/zkEnsemble.sh stop ${STOP_OPTS}
 
 echo "exited $0"
