@@ -42,7 +42,7 @@ RUN git clone https://github.com/mosuka/zookeeper.git .
 RUN ant jar
 
 # Add start script
-ADD docker-zookeeper.sh /usr/local/bin/
+COPY docker-zookeeper.sh /usr/local/bin/
 
 EXPOSE 2181 2888 3888
 USER $ZOOKEEPER_USER
