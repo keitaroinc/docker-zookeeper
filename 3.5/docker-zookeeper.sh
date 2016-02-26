@@ -24,6 +24,8 @@
 # USE the trap if you need to also do manual cleanup after the service is stopped,
 #     or need to start multiple services in the one container
 
+trap "echo TRAPed signal" HUP INT QUIT KILL TERM
+
 if ! OPTS=$(getopt -n $0 -o "" -l "seed:" -l "ip:" -l "clientport:" -l "peerport:" -l "electionport:" -l "role:" -l "clientip:" -l "confdir:" -l "datadir:" -l "foreground" -- "$@" 2>/dev/null); then
   exit 1
 fi
@@ -114,8 +116,6 @@ fi
 if [ -n "${CLIENT_PORT}" ]; then
   STOP_OPTS="${STOP_OPTS} --clientport=${CLIENT_PORT}"
 fi
-
-trap "echo TRAPed signal" HUP INT QUIT KILL TERM
 
 # start service in background here
 echo "Starting ZooKeeper"
