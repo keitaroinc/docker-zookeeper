@@ -20,3 +20,28 @@
 # it should be linked to and not copied. Things like java jar files are found
 # relative to the canonical path of this script.
 #
+
+# USE the trap if you need to also do manual cleanup after the service is stopped,
+#     or need to start multiple services in the one container
+trap "echo TRAPed signal" HUP INT QUIT KILL TERM
+
+# start service in background here
+echo "Starting ZooKeeper"
+./bin/zkEnsemble.sh start --seed=172.24.230.16:2181 \
+                          --ip=127.0.0.1 \
+                          --clientport=2181 \
+                          --peerport=2888 \
+                          --electionport=3888 \
+                          --role=participant \
+                          --clientport=2181 \
+                          --confdir=/opt/zookeeper/conf \
+                          --datadir=/opt/zookeeper/data
+
+echo "[hit enter key to exit] or run 'docker stop <container>'"
+read
+
+# stop service and clean up here
+echo "Stopping ZooKeeper"
+./bin/zkEnsemble.sh stop --ip=172.24.230.16 --clientport=2181
+
+echo "exited $0"
