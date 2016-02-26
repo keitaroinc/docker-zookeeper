@@ -19,7 +19,7 @@
 # relative to the canonical path of this script.
 #
 
-FROM java:openjdk-8-jre
+FROM java:openjdk-7-jre
 MAINTAINER Minoru Osuka "minoru.osuka@gmail.com"
 
 RUN apt-get update \
