@@ -30,7 +30,7 @@ RUN apt-get update \
 ENV ZOOKEEPER_GROUP zookeeper
 RUN groupadd -r $ZOOKEEPER_GROUP
 
-Add user
+# Add user
 ENV ZOOKEEPER_USER zookeeper
 ENV ZOOKEEPER_UID 2181
 RUN useradd -r -u $ZOOKEEPER_UID -g $ZOOKEEPER_GROUP $ZOOKEEPER_USER
