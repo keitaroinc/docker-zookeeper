@@ -128,7 +128,7 @@ stop_service () {
 echo "Starting ZooKeeper"
 $START_CMD
 
-echo "trap '$STOP_CMD; exit 0' HUP INT QUIT KILL TERM" >> ~/rcfile
+echo "trap '$STOP_CMD; exit 0' HUP INT QUIT KILL TERM" > ~/rcfile
 exec /bin/bash --rcfile ~/rcfile
 
 #echo "[hit enter key to exit] or run 'docker stop <container>'"
