@@ -42,7 +42,7 @@ WORKDIR /opt
 RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
 RUN tar -xzf zookeeper-$ZOOKEEPER_VERSION.tar.gz
 RUN mv /opt/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper
-RUN curl https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/1f7623c62e043fce55f85167ee309d0c1343d6e9/zkEnsemble.sh > /opt/zookeeper/bin/zkEnsemble.sh
+RUN wget https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/1f7623c62e043fce55f85167ee309d0c1343d6e9/zkEnsemble.sh > /opt/zookeeper/bin/zkEnsemble.sh
 RUN chmod +x /opt/zookeeper/bin/zkEnsemble.sh
 
 # Add start script
