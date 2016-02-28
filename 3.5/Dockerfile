@@ -23,6 +23,7 @@ FROM java:openjdk-7-jre
 MAINTAINER Minoru Osuka "minoru.osuka@gmail.com"
 
 RUN apt-get update \
+ && apt-get install -y curl tar \
  && apt-get clean
 
 # Add group
