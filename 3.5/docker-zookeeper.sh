@@ -128,6 +128,7 @@ stop_service () {
 echo "Starting ZooKeeper"
 $START_CMD
 
+touch ~/rcfile
 echo "trap '$STOP_CMD; exit 0' HUP INT QUIT KILL TERM" > ~/rcfile
 exec /bin/bash --rcfile ~/rcfile
 
