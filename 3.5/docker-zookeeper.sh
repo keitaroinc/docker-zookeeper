@@ -122,20 +122,27 @@ stop_service () {
   $ZOOKEEPER_HOME/bin/zkEnsemble.sh stop ${STOP_OPTS}
 }
 
-#trap "$STOP_CMD" HUP INT QUIT KILL TERM
+trap "$STOP_CMD && exit 0" HUP INT QUIT KILL TERM
 
 # start service in background here
 echo "Starting ZooKeeper"
 $START_CMD
 
-echo "trap '$STOP_CMD; exit 0' HUP INT QUIT KILL TERM" >> ~/.bashrc
-exec /bin/bash
+#while true
+#do
+#  tail -F /dev/null
+#done
 
-#echo "[hit enter key to exit] or run 'docker stop <container>'"
-#read
+# ---
+#echo "trap '$STOP_CMD; exit 0' HUP INT QUIT KILL TERM" >> ~/.bashrc
+#exec /bin/bash
 
-## stop service and clean up here
-#echo "Stopping ZooKeeper"
-#$STOP_CMD
+# ---
+echo "[hit enter key to exit] or run 'docker stop <container>'"
+read
 
-#echo "exited $0"
+# stop service and clean up here
+echo "Stopping ZooKeeper"
+$STOP_CMD
+
+echo "exited $0"
