@@ -38,7 +38,7 @@ RUN useradd -r -u $ZOOKEEPER_UID -g $ZOOKEEPER_GROUP $ZOOKEEPER_USER
 # Build ZooKeeper
 RUN mkdir /opt/zookeeper
 WORKDIR /opt/zookeeper
-RUN git clone https://github.com/mosuka/zookeeper.git .
+RUN git clone -b branch-3.5 https://github.com/apache/zookeeper.git .
 RUN ant jar
 
 # Add start script
