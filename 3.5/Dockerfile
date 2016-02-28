@@ -39,12 +39,10 @@ RUN useradd -r -u $ZOOKEEPER_UID -g $ZOOKEEPER_GROUP $ZOOKEEPER_USER
 ENV ZOOKEEPER_VERSION 3.5.0-alpha
 RUN mkdir -p /opt
 WORKDIR /opt
-RUN curl -O https://archive.apache.org/dist/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
-RUN tar -xzf zookeeper-$ZOOKEEPER_VERSION.tar.gz
-RUN mv zookeeper-$ZOOKEEPER_VERSION zookeeper
-WORKDIR /opt/zookeeper
-RUN curl https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/1f7623c62e043fce55f85167ee309d0c1343d6e9/zkEnsemble.sh > bin/zkEnsemble.sh
-RUN chmod +x bin/zkEnsemble.sh
+RUN curl https://archive.apache.org/dist/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz | tar -xzf - -C /opt
+RUN mv /opt/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper
+RUN curl https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/1f7623c62e043fce55f85167ee309d0c1343d6e9/zkEnsemble.sh > /opt/zookeeper/bin/zkEnsemble.sh
+RUN chmod +x /opt/zookeeper/bin/zkEnsemble.sh
 
 # Add start script
 COPY docker-zookeeper.sh /usr/local/bin/
