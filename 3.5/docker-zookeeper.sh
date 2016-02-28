@@ -24,8 +24,6 @@
 # USE the trap if you need to also do manual cleanup after the service is stopped,
 #     or need to start multiple services in the one container
 
-trap "echo TRAPed signal" HUP INT QUIT KILL TERM
-
 if ! OPTS=$(getopt -n $0 -o "" -l "seed:" -l "ip:" -l "clientport:" -l "peerport:" -l "electionport:" -l "role:" -l "clientip:" -l "confdir:" -l "datadir:" -l "foreground" -- "$@" 2>/dev/null); then
   exit 1
 fi
@@ -107,6 +105,7 @@ fi
 if [ "${FOREGROUND}" == 1 ]; then
   START_OPTS="${START_OPTS} --foreground"
 fi
+START_CMD="$ZOOKEEPER_HOME/bin/zkEnsemble.sh start ${START_OPTS}"
 
 # create stop options
 STOP_OPTS=""
@@ -116,16 +115,24 @@ fi
 if [ -n "${CLIENT_PORT}" ]; then
   STOP_OPTS="${STOP_OPTS} --clientport=${CLIENT_PORT}"
 fi
+STOP_CMD="$ZOOKEEPER_HOME/bin/zkEnsemble.sh stop ${STOP_OPTS}"
+
+stop_service () {
+  echo "Stopping ZooKeeper"
+  $ZOOKEEPER_HOME/bin/zkEnsemble.sh stop ${STOP_OPTS}
+}
+
+trap "$STOP_CMD" HUP INT QUIT KILL TERM
 
 # start service in background here
 echo "Starting ZooKeeper"
-$ZOOKEEPER_HOME/bin/zkEnsemble.sh start ${START_OPTS}
+$START_CMD
 
 echo "[hit enter key to exit] or run 'docker stop <container>'"
 read
 
 # stop service and clean up here
 echo "Stopping ZooKeeper"
-$ZOOKEEPER_HOME/bin/zkEnsemble.sh stop ${STOP_OPTS}
+$STOP_CMD
 
 echo "exited $0"
