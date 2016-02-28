@@ -104,7 +104,7 @@ fi
 if [ -n "${ZOO_DATADIR}" ]; then
   START_OPTS="${START_OPTS} --datadir=${ZOO_DATADIR}"
 fi
-if [ ${FOREGROUND} -eq 1 ]; then
+if [ "${FOREGROUND}" == 1 ]; then
   START_OPTS="${START_OPTS} --foreground"
 fi
 
