@@ -23,7 +23,6 @@ FROM java:openjdk-7-jre
 MAINTAINER Minoru Osuka "minoru.osuka@gmail.com"
 
 RUN apt-get update \
- && apt-get -y install git ant \
  && apt-get clean
 
 # Add group
