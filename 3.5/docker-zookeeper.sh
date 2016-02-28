@@ -119,13 +119,13 @@ fi
 
 # start service in background here
 echo "Starting ZooKeeper"
-./bin/zkEnsemble.sh start ${START_OPTS}
+$ZOOKEEPER_HOME/bin/zkEnsemble.sh start ${START_OPTS}
 
 echo "[hit enter key to exit] or run 'docker stop <container>'"
 read
 
 # stop service and clean up here
 echo "Stopping ZooKeeper"
-./bin/zkEnsemble.sh stop ${STOP_OPTS}
+$ZOOKEEPER_HOME/bin/zkEnsemble.sh stop ${STOP_OPTS}
 
 echo "exited $0"

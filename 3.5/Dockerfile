@@ -37,13 +37,14 @@ RUN useradd -r -u $ZOOKEEPER_UID -g $ZOOKEEPER_GROUP $ZOOKEEPER_USER
 
 # Install ZooKeeper
 ENV ZOOKEEPER_VERSION 3.5.0-alpha
+ENV ZOOKEEPER_HOME /opt/zookeeper
 RUN mkdir -p /opt
 WORKDIR /opt
 RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
 RUN tar -xzf zookeeper-$ZOOKEEPER_VERSION.tar.gz
-RUN mv /opt/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper
-RUN wget https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/1f7623c62e043fce55f85167ee309d0c1343d6e9/zkEnsemble.sh > /opt/zookeeper/bin/zkEnsemble.sh
-RUN chmod +x /opt/zookeeper/bin/zkEnsemble.sh
+RUN mv /opt/zookeeper-$ZOOKEEPER_VERSION $ZOOKEEPER_HOME
+RUN wget https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/1f7623c62e043fce55f85167ee309d0c1343d6e9/zkEnsemble.sh > $ZOOKEEPER_HOME/bin/zkEnsemble.sh
+RUN chmod +x $ZOOKEEPER_HOME/bin/zkEnsemble.sh
 
 # Add start script
 COPY docker-zookeeper.sh /usr/local/bin/
