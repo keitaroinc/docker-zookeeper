@@ -37,7 +37,7 @@ RUN useradd -r -u $ZOOKEEPER_UID -g $ZOOKEEPER_GROUP $ZOOKEEPER_USER
 
 # Install ZooKeeper
 ENV ZOOKEEPER_VERSION 3.5.0-alpha
-RUN mkdir /opt
+RUN mkdir -p /opt
 WORKDIR /opt
 RUN curl https://archive.apache.org/dist/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz | tar -xzf - -C /opt
 RUN mv /opt/zookeeper-$ZOOKEEPER_VERSION /opt/zookeeper
