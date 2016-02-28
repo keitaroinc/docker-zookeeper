@@ -46,7 +46,7 @@ RUN wget https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/1f76
 RUN chmod +x /opt/zookeeper/bin/zkEnsemble.sh
 
 # Add start script
-COPY 3.5/docker-zookeeper.sh /usr/local/bin/
+COPY docker-zookeeper.sh /usr/local/bin/
 
 EXPOSE 2181 2888 3888
 USER $ZOOKEEPER_USER
