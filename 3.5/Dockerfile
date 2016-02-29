@@ -23,7 +23,7 @@ FROM java:openjdk-7-jre
 MAINTAINER Minoru Osuka "minoru.osuka@gmail.com"
 
 RUN apt-get update \
- && apt-get install -y wget tar net-tools \
+ && apt-get install -y wget tar net-tools netcat \
  && apt-get clean
 
 # Add group
