@@ -49,7 +49,6 @@ RUN chown -R $ZOOKEEPER_USER:$ZOOKEEPER_GROUP $ZOOKEEPER_HOME
 
 # Add start script
 ADD docker-zookeeper.sh /usr/local/bin/
-ADD run.sh /usr/local/bin/
 
 EXPOSE 2181 2888 3888
 USER $ZOOKEEPER_USER
@@ -57,4 +56,3 @@ USER $ZOOKEEPER_USER
 WORKDIR $ZOOKEEPER_HOME
 
 CMD ["/usr/local/bin/docker-zookeeper.sh"]
-#CMD ["/usr/local/bin/run.sh"]
