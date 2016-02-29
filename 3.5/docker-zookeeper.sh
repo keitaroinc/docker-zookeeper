@@ -124,4 +124,4 @@ echo "Starting ZooKeeper"
 echo $START_CMD
 $START_CMD
 
-tail -f $ZOOKEEPER_HOME/zookeeper.out & wait ${!}
+tail -f /dev/null & wait ${!}
