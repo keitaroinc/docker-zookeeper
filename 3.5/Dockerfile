@@ -23,7 +23,7 @@ FROM java:openjdk-7-jre
 MAINTAINER Minoru Osuka "minoru.osuka@gmail.com"
 
 RUN apt-get update \
- && apt-get install -y wget tar \
+ && apt-get install -y wget tar net-tools \
  && apt-get clean
 
 # Add group
@@ -43,13 +43,18 @@ WORKDIR /opt
 RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
 RUN tar -xzf zookeeper-$ZOOKEEPER_VERSION.tar.gz
 RUN mv /opt/zookeeper-$ZOOKEEPER_VERSION $ZOOKEEPER_HOME
-RUN wget https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/1f7623c62e043fce55f85167ee309d0c1343d6e9/zkEnsemble.sh > $ZOOKEEPER_HOME/bin/zkEnsemble.sh
+RUN wget https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/485bb4cbf01c09c62f54f491ce43e5ad404b53b0/zkEnsemble.sh -P $ZOOKEEPER_HOME/bin
 RUN chmod +x $ZOOKEEPER_HOME/bin/zkEnsemble.sh
+RUN chown -R $ZOOKEEPER_USER:$ZOOKEEPER_GROUP $ZOOKEEPER_HOME 
 
 # Add start script
-COPY docker-zookeeper.sh /usr/local/bin/
+ADD docker-zookeeper.sh /usr/local/bin/
+ADD run.sh /usr/local/bin/
 
 EXPOSE 2181 2888 3888
 USER $ZOOKEEPER_USER
 
+WORKDIR $ZOOKEEPER_HOME
+
 CMD ["/usr/local/bin/docker-zookeeper.sh"]
+#CMD ["/usr/local/bin/run.sh"]

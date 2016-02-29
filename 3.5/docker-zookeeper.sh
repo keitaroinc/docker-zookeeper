@@ -117,32 +117,11 @@ if [ -n "${CLIENT_PORT}" ]; then
 fi
 STOP_CMD="$ZOOKEEPER_HOME/bin/zkEnsemble.sh stop ${STOP_OPTS}"
 
-stop_service () {
-  echo "Stopping ZooKeeper"
-  $ZOOKEEPER_HOME/bin/zkEnsemble.sh stop ${STOP_OPTS}
-}
-
 trap "$STOP_CMD && exit 0" HUP INT QUIT KILL TERM
 
 # start service in background here
 echo "Starting ZooKeeper"
+echo $START_CMD
 $START_CMD
 
-#while true
-#do
-#  tail -F /dev/null
-#done
-
-# ---
-#echo "trap '$STOP_CMD; exit 0' HUP INT QUIT KILL TERM" >> ~/.bashrc
-#exec /bin/bash
-
-# ---
-echo "[hit enter key to exit] or run 'docker stop <container>'"
-read
-
-# stop service and clean up here
-echo "Stopping ZooKeeper"
-$STOP_CMD
-
-echo "exited $0"
+tail -f $ZOOKEEPER_HOME/zookeeper.out & wait ${!}
