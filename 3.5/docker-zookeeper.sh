@@ -28,7 +28,7 @@ if ! OPTS=$(getopt -n $0 -o "" -l "seed:" -l "ip:" -l "clientport:" -l "peerport
   exit 1
 fi
 
-# check options
+# Check the options.
 eval set -- "${OPTS}"
 while true; do
   case "$1" in
@@ -73,7 +73,7 @@ while true; do
   esac
 done
 
-# create start command
+# Create a start command.
 START_OPTS=""
 if [ -n "${SEED}" ]; then
   START_OPTS="${START_OPTS} --seed=${SEED}"
@@ -107,7 +107,7 @@ if [ "${FOREGROUND}" == 1 ]; then
 fi
 START_CMD="$ZOOKEEPER_HOME/bin/zkEnsemble.sh start ${START_OPTS}"
 
-# create stop command
+# Create a stop command.
 STOP_OPTS=""
 if [ -n "${IP}" ]; then
   STOP_OPTS="${STOP_OPTS} --ip=${IP}"
@@ -117,11 +117,11 @@ if [ -n "${CLIENT_PORT}" ]; then
 fi
 STOP_CMD="$ZOOKEEPER_HOME/bin/zkEnsemble.sh stop ${STOP_OPTS}"
 
+# When a process receive signals, execute the a stop command.
 trap "$STOP_CMD && exit 0" HUP INT QUIT KILL TERM
 
-# start service in background here
-echo "Starting ZooKeeper"
-echo $START_CMD
+# Execute a start command in the background.
 $START_CMD
 
-tail -f /dev/null & wait ${!}
+# Start infinite loop.
+while true; do tail -f /dev/null & wait ${!}; done
