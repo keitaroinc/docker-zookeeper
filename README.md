@@ -2,7 +2,8 @@
 
 ## How to use this Docker image
 
-Example:
+Example:  
+
 Start a 1st node of ensemble
 ```sh
 $ docker run -d -p 12181:2181 mosuka/docker-zookeeper docker-zookeeper.sh
