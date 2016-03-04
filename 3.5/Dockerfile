@@ -23,7 +23,7 @@ FROM java:openjdk-7-jre
 MAINTAINER Minoru Osuka "minoru.osuka@gmail.com"
 
 RUN apt-get update \
- && apt-get install -y wget tar net-tools netcat \
+ && apt-get install -y wget tar net-tools netcat jq \
  && apt-get clean
 
 # Add group
@@ -37,22 +37,22 @@ RUN useradd -r -u $ZOOKEEPER_UID -g $ZOOKEEPER_GROUP $ZOOKEEPER_USER
 
 # Install ZooKeeper
 ENV ZOOKEEPER_VERSION 3.5.0-alpha
-ENV ZOOKEEPER_HOME /opt/zookeeper
+ENV ZOOKEEPER_PREFIX /opt/zookeeper
 RUN mkdir -p /opt
 WORKDIR /opt
 RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
 RUN tar -xzf zookeeper-$ZOOKEEPER_VERSION.tar.gz
-RUN mv /opt/zookeeper-$ZOOKEEPER_VERSION $ZOOKEEPER_HOME
-RUN wget https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/7f6a487f0a7a8b85a69330eaa3b4e4e8f51b432f/zkEnsemble.sh -P $ZOOKEEPER_HOME/bin
-RUN chmod +x $ZOOKEEPER_HOME/bin/zkEnsemble.sh
-RUN chown -R $ZOOKEEPER_USER:$ZOOKEEPER_GROUP $ZOOKEEPER_HOME 
+RUN mv /opt/zookeeper-$ZOOKEEPER_VERSION $ZOOKEEPER_PREFIX
+RUN wget https://gist.githubusercontent.com/mosuka/f124b0c2d0dbaa3278d4/raw/7f6a487f0a7a8b85a69330eaa3b4e4e8f51b432f/zkEnsemble.sh -P $ZOOKEEPER_PREFIX/bin
+RUN chmod +x $ZOOKEEPER_PREFIX/bin/zkEnsemble.sh
+RUN chown -R $ZOOKEEPER_USER:$ZOOKEEPER_GROUP $ZOOKEEPER_PREFIX 
 
 # Add start script
-ADD docker-zookeeper.sh /usr/local/bin/
+ADD docker-run.sh /usr/local/bin/
 
 EXPOSE 2181 2888 3888
 USER $ZOOKEEPER_USER
 
-WORKDIR $ZOOKEEPER_HOME
+WORKDIR $ZOOKEEPER_PREFIX
 
-CMD ["/usr/local/bin/docker-zookeeper.sh"]
+CMD ["/usr/local/bin/docker-run.sh"]

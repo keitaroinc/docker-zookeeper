@@ -105,7 +105,7 @@ fi
 if [ "${FOREGROUND}" == 1 ]; then
   START_OPTS="${START_OPTS} --foreground"
 fi
-START_CMD="$ZOOKEEPER_HOME/bin/zkEnsemble.sh start ${START_OPTS}"
+START_CMD="$ZOOKEEPER_PREFIX/bin/zkEnsemble.sh start ${START_OPTS}"
 
 # Create a stop command.
 STOP_OPTS=""
@@ -115,7 +115,7 @@ fi
 if [ -n "${CLIENT_PORT}" ]; then
   STOP_OPTS="${STOP_OPTS} --clientport=${CLIENT_PORT}"
 fi
-STOP_CMD="$ZOOKEEPER_HOME/bin/zkEnsemble.sh stop ${STOP_OPTS}"
+STOP_CMD="$ZOOKEEPER_PREFIX/bin/zkEnsemble.sh stop ${STOP_OPTS}"
 
 # When a process receive signals, execute the a stop command.
 trap "$STOP_CMD && exit 0" HUP INT QUIT KILL TERM
