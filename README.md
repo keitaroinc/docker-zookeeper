@@ -1,26 +1,39 @@
 # docker-zookeeper
 
-### Start Standalone ZooKeeper
+## Start Standalone ZooKeeper
+
+### Start ZooKeeper
 
 ```sh
-# Start ZooKeeper
 $ docker run -d -p 12181:2181 --name zookeeper1 mosuka/docker-zookeeper:release-3.4
 d98212b5603d3450e4e269549e58857d3e42c543e5fb8748aa7353bb80306c51
+```
 
-# Check container id
+### Check container id
+
+```sh
 $ docker ps
 CONTAINER ID        IMAGE                                 COMMAND                  CREATED             STATUS              PORTS                                         NAMES
 d98212b5603d        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   18 seconds ago      Up 17 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper1
+```
 
-# Get container ip
+### Get container ip
+
+```sh
 $ docker inspect -f '{{ .NetworkSettings.IPAddress }}' d98212b5603d
 172.17.0.2
+```
 
-# Get host ip
+### Get host ip
+
+```sh
 $ docker-machine ip default
 192.168.99.100
+```
 
-# Connect via zkCli.sh
+### Connect via zkCli.sh
+
+```sh
 $ /Users/mosuka/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server 192.168.99.100:12181
 Connecting to 192.168.99.100:12181
 2016-03-10 14:26:29,460 [myid:] - INFO  [main:Environment@100] - Client environment:zookeeper.version=3.4.8--1, built on 02/06/2016 03:18 GMT
@@ -51,14 +64,18 @@ WatchedEvent state:SyncConnected type:None path:null
 [zk: 192.168.99.100:12181(CONNECTED) 0]
 ```
 
-### Start ZooKeeper ensemble
+## Start ZooKeeper ensemble
+
+### Create network
 
 ```sh
-# Create network
 $ docker network create --subnet=172.18.0.0/16 zknet
 a99762518a0409ab746fccaafbda2db79be41c4ab2be61fe9a5c85bc98e926a8
+```
 
-# Start zookeeper1
+### Start zookeeper1
+
+```sh
 $ docker run -d -p 12181:2181 --net=zknet --ip 172.18.0.2 --name zookeeper1 \
     -e ZOOKEEPER_ID=1 \
     -e ZOOKEEPER_SERVER_1=172.18.0.2 \
@@ -66,8 +83,11 @@ $ docker run -d -p 12181:2181 --net=zknet --ip 172.18.0.2 --name zookeeper1 \
     -e ZOOKEEPER_SERVER_3=172.18.0.4 \
     mosuka/docker-zookeeper:release-3.4
 1d37be4d950e981d1b585093eb4db50158b1d1751a750519291cd588e809c139
+```
 
-# Start zookeeper2
+### Start zookeeper2
+
+```sh
 $ docker run -d -p 22181:2181 --net=zknet --ip 172.18.0.3 --name zookeeper2 \
     -e ZOOKEEPER_ID=2 \
     -e ZOOKEEPER_SERVER_1=172.18.0.2 \
@@ -75,8 +95,11 @@ $ docker run -d -p 22181:2181 --net=zknet --ip 172.18.0.3 --name zookeeper2 \
     -e ZOOKEEPER_SERVER_3=172.18.0.4 \
     mosuka/docker-zookeeper:release-3.4
 a39cafd673ba67647c27ee46926a114dd7348a480695dc1d1579ffcb43787725
+```
 
-# Start zookeeper3
+### Start zookeeper3
+
+```sh
 $ docker run -d -p 32181:2181 --net=zknet --ip 172.18.0.4 --name zookeeper3 \
     -e ZOOKEEPER_ID=3 \
     -e ZOOKEEPER_SERVER_1=172.18.0.2 \
@@ -84,31 +107,49 @@ $ docker run -d -p 32181:2181 --net=zknet --ip 172.18.0.4 --name zookeeper3 \
     -e ZOOKEEPER_SERVER_3=172.18.0.4 \
     mosuka/docker-zookeeper:release-3.4
 f9cca9b349ff2d5b1d7180edcabe07466a45a02efebf26749ef6f54155e5450d
+```
 
-# Check container id
+### Check container id
+
+```sh
 $ docker ps
 CONTAINER ID        IMAGE                                 COMMAND                  CREATED             STATUS              PORTS                                         NAMES
 f9cca9b349ff        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   9 seconds ago       Up 9 seconds        2888/tcp, 3888/tcp, 0.0.0.0:32181->2181/tcp   zookeeper3
 a39cafd673ba        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   23 seconds ago      Up 23 seconds       2888/tcp, 3888/tcp, 0.0.0.0:22181->2181/tcp   zookeeper2
 1d37be4d950e        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   35 seconds ago      Up 35 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper1
+```
 
-# Get container ip of zookeeper1
+### Get container ip of zookeeper1
+
+```sh
 $ docker inspect -f '{{ .NetworkSettings.Networks.zknet.IPAddress }}' 1d37be4d950e
 172.18.0.2
+```
 
-# Get container ip of zookeeper2
+### Get container ip of zookeeper2
+
+```sh
 $ docker inspect -f '{{ .NetworkSettings.Networks.zknet.IPAddress }}' a39cafd673ba
 172.18.0.3
+```
 
-# Get container ip of zookeeper3
+### Get container ip of zookeeper3
+
+```sh
 $ docker inspect -f '{{ .NetworkSettings.Networks.zknet.IPAddress }}' f9cca9b349ff
 172.18.0.4
+```
 
-# Get host ip
+### Get host ip
+
+```sh
 $ docker-machine ip default
 192.168.99.100
+```
 
-# Connect via zkCli.sh
+### Connect via zkCli.sh
+
+```sh
 $ /Users/mosuka/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server 192.168.99.100:12181
 Connecting to 192.168.99.100:12181
 2016-03-10 14:26:29,460 [myid:] - INFO  [main:Environment@100] - Client environment:zookeeper.version=3.4.8--1, built on 02/06/2016 03:18 GMT
