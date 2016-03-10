@@ -2,14 +2,14 @@
 
 ## Start Standalone ZooKeeper
 
-### Start ZooKeeper
+### 1. Start ZooKeeper
 
 ```sh
 $ docker run -d -p 12181:2181 --name zookeeper1 mosuka/docker-zookeeper:release-3.4
 d98212b5603d3450e4e269549e58857d3e42c543e5fb8748aa7353bb80306c51
 ```
 
-### Check container id
+### 2. Check container ID
 
 ```sh
 $ docker ps
@@ -17,21 +17,21 @@ CONTAINER ID        IMAGE                                 COMMAND               
 d98212b5603d        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   18 seconds ago      Up 17 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper1
 ```
 
-### Get container ip
+### 3. Get container IP
 
 ```sh
 $ docker inspect -f '{{ .NetworkSettings.IPAddress }}' d98212b5603d
 172.17.0.2
 ```
 
-### Get host ip
+### 4. Get host IP
 
 ```sh
 $ docker-machine ip default
 192.168.99.100
 ```
 
-### Connect via zkCli.sh
+### 5. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
 $ /Users/mosuka/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server 192.168.99.100:12181
@@ -66,14 +66,14 @@ WatchedEvent state:SyncConnected type:None path:null
 
 ## Start ZooKeeper ensemble
 
-### Create network
+### 1. Create network
 
 ```sh
 $ docker network create --subnet=172.18.0.0/16 zknet
 a99762518a0409ab746fccaafbda2db79be41c4ab2be61fe9a5c85bc98e926a8
 ```
 
-### Start zookeeper1
+### 2. Start zookeeper1
 
 ```sh
 $ docker run -d -p 12181:2181 --net=zknet --ip 172.18.0.2 --name zookeeper1 \
@@ -85,7 +85,7 @@ $ docker run -d -p 12181:2181 --net=zknet --ip 172.18.0.2 --name zookeeper1 \
 1d37be4d950e981d1b585093eb4db50158b1d1751a750519291cd588e809c139
 ```
 
-### Start zookeeper2
+### 3. Start zookeeper2
 
 ```sh
 $ docker run -d -p 22181:2181 --net=zknet --ip 172.18.0.3 --name zookeeper2 \
@@ -97,7 +97,7 @@ $ docker run -d -p 22181:2181 --net=zknet --ip 172.18.0.3 --name zookeeper2 \
 a39cafd673ba67647c27ee46926a114dd7348a480695dc1d1579ffcb43787725
 ```
 
-### Start zookeeper3
+### 4. Start zookeeper3
 
 ```sh
 $ docker run -d -p 32181:2181 --net=zknet --ip 172.18.0.4 --name zookeeper3 \
@@ -109,7 +109,7 @@ $ docker run -d -p 32181:2181 --net=zknet --ip 172.18.0.4 --name zookeeper3 \
 f9cca9b349ff2d5b1d7180edcabe07466a45a02efebf26749ef6f54155e5450d
 ```
 
-### Check container id
+### 5. Check container ID
 
 ```sh
 $ docker ps
@@ -119,35 +119,35 @@ a39cafd673ba        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"
 1d37be4d950e        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   35 seconds ago      Up 35 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper1
 ```
 
-### Get container ip of zookeeper1
+### 6. Get container IP of zookeeper1
 
 ```sh
 $ docker inspect -f '{{ .NetworkSettings.Networks.zknet.IPAddress }}' 1d37be4d950e
 172.18.0.2
 ```
 
-### Get container ip of zookeeper2
+### 7. Get container IP of zookeeper2
 
 ```sh
 $ docker inspect -f '{{ .NetworkSettings.Networks.zknet.IPAddress }}' a39cafd673ba
 172.18.0.3
 ```
 
-### Get container ip of zookeeper3
+### 8. Get container IP of zookeeper3
 
 ```sh
 $ docker inspect -f '{{ .NetworkSettings.Networks.zknet.IPAddress }}' f9cca9b349ff
 172.18.0.4
 ```
 
-### Get host ip
+### 9. Get host IP
 
 ```sh
 $ docker-machine ip default
 192.168.99.100
 ```
 
-### Connect via zkCli.sh
+### 10. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
 $ /Users/mosuka/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server 192.168.99.100:12181
