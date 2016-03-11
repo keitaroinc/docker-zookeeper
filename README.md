@@ -1,6 +1,6 @@
 # docker-zookeeper
 
-## Start Standalone ZooKeeper
+## Standalone ZooKeeper example
 
 ### 1. Start ZooKeeper
 
@@ -64,49 +64,49 @@ WatchedEvent state:SyncConnected type:None path:null
 [zk: 192.168.99.100:12181(CONNECTED) 0]
 ```
 
-## Start ZooKeeper ensemble
+## ZooKeeper ensemble example
 
 ### 1. Create network
 
 ```sh
-$ docker network create --subnet=172.18.0.0/16 zknet
-a99762518a0409ab746fccaafbda2db79be41c4ab2be61fe9a5c85bc98e926a8
+$ docker network create --subnet=172.18.0.0/16 network1
+61ff80da6894f9035ce6425751f3861c6e8b17078883d0bc0218896d894317c9
 ```
 
 ### 2. Start zookeeper1
 
 ```sh
-$ docker run -d -p 12181:2181 --net=zknet --ip 172.18.0.2 --name zookeeper1 \
+$ docker run -d -p 12181:2181 --net=network1 --ip 172.18.0.2 --name zookeeper1 \
     -e ZOOKEEPER_ID=1 \
     -e ZOOKEEPER_SERVER_1=172.18.0.2 \
     -e ZOOKEEPER_SERVER_2=172.18.0.3 \
     -e ZOOKEEPER_SERVER_3=172.18.0.4 \
     mosuka/docker-zookeeper:release-3.4
-1d37be4d950e981d1b585093eb4db50158b1d1751a750519291cd588e809c139
+fc366f620f79de1385a19eacf2ec1d126eaca7e497dda126dda51bf6e9463b2c
 ```
 
 ### 3. Start zookeeper2
 
 ```sh
-$ docker run -d -p 22181:2181 --net=zknet --ip 172.18.0.3 --name zookeeper2 \
+$ docker run -d -p 22181:2181 --net=network1 --ip 172.18.0.3 --name zookeeper2 \
     -e ZOOKEEPER_ID=2 \
     -e ZOOKEEPER_SERVER_1=172.18.0.2 \
     -e ZOOKEEPER_SERVER_2=172.18.0.3 \
     -e ZOOKEEPER_SERVER_3=172.18.0.4 \
     mosuka/docker-zookeeper:release-3.4
-a39cafd673ba67647c27ee46926a114dd7348a480695dc1d1579ffcb43787725
+d0c05513b4fdd46574db8c455fe8cd720a80bbd822b9ea3f65ed3a5ef6f57a17
 ```
 
 ### 4. Start zookeeper3
 
 ```sh
-$ docker run -d -p 32181:2181 --net=zknet --ip 172.18.0.4 --name zookeeper3 \
+$ docker run -d -p 32181:2181 --net=network1 --ip 172.18.0.4 --name zookeeper3 \
     -e ZOOKEEPER_ID=3 \
     -e ZOOKEEPER_SERVER_1=172.18.0.2 \
     -e ZOOKEEPER_SERVER_2=172.18.0.3 \
     -e ZOOKEEPER_SERVER_3=172.18.0.4 \
     mosuka/docker-zookeeper:release-3.4
-f9cca9b349ff2d5b1d7180edcabe07466a45a02efebf26749ef6f54155e5450d
+432afd32772c9e76386284cc19727522fc09f4450ac6b448bb95066941168359
 ```
 
 ### 5. Check container ID
@@ -114,29 +114,29 @@ f9cca9b349ff2d5b1d7180edcabe07466a45a02efebf26749ef6f54155e5450d
 ```sh
 $ docker ps
 CONTAINER ID        IMAGE                                 COMMAND                  CREATED             STATUS              PORTS                                         NAMES
-f9cca9b349ff        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   9 seconds ago       Up 9 seconds        2888/tcp, 3888/tcp, 0.0.0.0:32181->2181/tcp   zookeeper3
-a39cafd673ba        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   23 seconds ago      Up 23 seconds       2888/tcp, 3888/tcp, 0.0.0.0:22181->2181/tcp   zookeeper2
-1d37be4d950e        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   35 seconds ago      Up 35 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper1
+432afd32772c        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   9 seconds ago       Up 9 seconds        2888/tcp, 3888/tcp, 0.0.0.0:32181->2181/tcp   zookeeper3
+d0c05513b4fd        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   19 seconds ago      Up 19 seconds       2888/tcp, 3888/tcp, 0.0.0.0:22181->2181/tcp   zookeeper2
+fc366f620f79        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   32 seconds ago      Up 31 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper1
 ```
 
 ### 6. Get container IP of zookeeper1
 
 ```sh
-$ docker inspect -f '{{ .NetworkSettings.Networks.zknet.IPAddress }}' 1d37be4d950e
+$ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' fc366f620f79
 172.18.0.2
 ```
 
 ### 7. Get container IP of zookeeper2
 
 ```sh
-$ docker inspect -f '{{ .NetworkSettings.Networks.zknet.IPAddress }}' a39cafd673ba
+$ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' d0c05513b4fd
 172.18.0.3
 ```
 
 ### 8. Get container IP of zookeeper3
 
 ```sh
-$ docker inspect -f '{{ .NetworkSettings.Networks.zknet.IPAddress }}' f9cca9b349ff
+$ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' 432afd32772c
 172.18.0.4
 ```
 
