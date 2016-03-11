@@ -5,7 +5,7 @@
 ### 1. Start standalone ZooKeeper
 
 ```sh
-$ docker run -d -p 12181:2181 --name zookeeper1 mosuka/docker-zookeeper:release-3.4
+$ docker run -d -p 12181:2181 --name zookeeper mosuka/docker-zookeeper:release-3.4
 d98212b5603d3450e4e269549e58857d3e42c543e5fb8748aa7353bb80306c51
 ```
 
@@ -14,13 +14,13 @@ d98212b5603d3450e4e269549e58857d3e42c543e5fb8748aa7353bb80306c51
 ```sh
 $ docker ps
 CONTAINER ID        IMAGE                                 COMMAND                  CREATED             STATUS              PORTS                                         NAMES
-d98212b5603d        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   18 seconds ago      Up 17 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper1
+d98212b5603d        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   18 seconds ago      Up 17 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper
 ```
 
 ### 3. Get container IP
 
 ```sh
-$ docker inspect -f '{{ .NetworkSettings.IPAddress }}' d98212b5603d
+$ docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper
 172.17.0.2
 ```
 
@@ -124,21 +124,21 @@ fc366f620f79        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"
 ### 6. Get container IP of 1st ZooKeeper
 
 ```sh
-$ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' fc366f620f79
+$ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' zookeeper1
 172.18.0.2
 ```
 
 ### 7. Get container IP of 2nd ZooKeeper
 
 ```sh
-$ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' d0c05513b4fd
+$ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' zookeeper2
 172.18.0.3
 ```
 
 ### 8. Get container IP of 3rd ZooKeeper
 
 ```sh
-$ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' 432afd32772c
+$ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' zookeeper3
 172.18.0.4
 ```
 
