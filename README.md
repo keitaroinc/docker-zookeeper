@@ -2,7 +2,7 @@
 
 ## Standalone ZooKeeper example
 
-### 1. Start ZooKeeper
+### 1. Start standalone ZooKeeper
 
 ```sh
 $ docker run -d -p 12181:2181 --name zookeeper1 mosuka/docker-zookeeper:release-3.4
@@ -66,7 +66,7 @@ WatchedEvent state:SyncConnected type:None path:null
 
 
 
-## ZooKeeper ensemble example
+## ZooKeeper ensemble (3 nodes) example
 
 ### 1. Create network
 
@@ -75,7 +75,7 @@ $ docker network create --subnet=172.18.0.0/16 network1
 61ff80da6894f9035ce6425751f3861c6e8b17078883d0bc0218896d894317c9
 ```
 
-### 2. Start zookeeper1
+### 2. Start 1st ZooKeeper
 
 ```sh
 $ docker run -d -p 12181:2181 --net=network1 --ip 172.18.0.2 --name zookeeper1 \
@@ -87,7 +87,7 @@ $ docker run -d -p 12181:2181 --net=network1 --ip 172.18.0.2 --name zookeeper1 \
 fc366f620f79de1385a19eacf2ec1d126eaca7e497dda126dda51bf6e9463b2c
 ```
 
-### 3. Start zookeeper2
+### 3. Start 2nd ZooKeeper
 
 ```sh
 $ docker run -d -p 22181:2181 --net=network1 --ip 172.18.0.3 --name zookeeper2 \
@@ -99,7 +99,7 @@ $ docker run -d -p 22181:2181 --net=network1 --ip 172.18.0.3 --name zookeeper2 \
 d0c05513b4fdd46574db8c455fe8cd720a80bbd822b9ea3f65ed3a5ef6f57a17
 ```
 
-### 4. Start zookeeper3
+### 4. Start 3rd ZooKeeper
 
 ```sh
 $ docker run -d -p 32181:2181 --net=network1 --ip 172.18.0.4 --name zookeeper3 \
@@ -121,21 +121,21 @@ d0c05513b4fd        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"
 fc366f620f79        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   32 seconds ago      Up 31 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper1
 ```
 
-### 6. Get container IP of zookeeper1
+### 6. Get container IP of 1st ZooKeeper
 
 ```sh
 $ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' fc366f620f79
 172.18.0.2
 ```
 
-### 7. Get container IP of zookeeper2
+### 7. Get container IP of 2nd ZooKeeper
 
 ```sh
 $ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' d0c05513b4fd
 172.18.0.3
 ```
 
-### 8. Get container IP of zookeeper3
+### 8. Get container IP of 3rd ZooKeeper
 
 ```sh
 $ docker inspect -f '{{ .NetworkSettings.Networks.network1.IPAddress }}' 432afd32772c
