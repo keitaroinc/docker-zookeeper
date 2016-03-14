@@ -5,7 +5,7 @@
 ### 1. Start standalone ZooKeeper
 
 ```sh
-$ docker run -d -p 12181:2181 --name zookeeper mosuka/docker-zookeeper:release-3.4
+$ docker run -d -p 2182:2181 --name zookeeper mosuka/docker-zookeeper:release-3.4
 d98212b5603d3450e4e269549e58857d3e42c543e5fb8748aa7353bb80306c51
 ```
 
@@ -14,7 +14,7 @@ d98212b5603d3450e4e269549e58857d3e42c543e5fb8748aa7353bb80306c51
 ```sh
 $ docker ps
 CONTAINER ID        IMAGE                                 COMMAND                  CREATED             STATUS              PORTS                                         NAMES
-d98212b5603d        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   18 seconds ago      Up 17 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper
+d98212b5603d        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   18 seconds ago      Up 17 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper
 ```
 
 ### 3. Get container IP
@@ -34,8 +34,8 @@ $ docker-machine ip default
 ### 5. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
-$ /Users/mosuka/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server 192.168.99.100:12181
-Connecting to 192.168.99.100:12181
+$ /Users/mosuka/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server 192.168.99.100:2182
+Connecting to 192.168.99.100:2182
 2016-03-10 14:26:29,460 [myid:] - INFO  [main:Environment@100] - Client environment:zookeeper.version=3.4.8--1, built on 02/06/2016 03:18 GMT
 2016-03-10 14:26:29,463 [myid:] - INFO  [main:Environment@100] - Client environment:host.name=172.17.4.1
 2016-03-10 14:26:29,463 [myid:] - INFO  [main:Environment@100] - Client environment:java.version=1.8.0_65
@@ -51,17 +51,17 @@ Connecting to 192.168.99.100:12181
 2016-03-10 14:26:29,467 [myid:] - INFO  [main:Environment@100] - Client environment:user.name=mosuka
 2016-03-10 14:26:29,467 [myid:] - INFO  [main:Environment@100] - Client environment:user.home=/Users/mosuka
 2016-03-10 14:26:29,468 [myid:] - INFO  [main:Environment@100] - Client environment:user.dir=/Users/mosuka
-2016-03-10 14:26:29,469 [myid:] - INFO  [main:ZooKeeper@438] - Initiating client connection, connectString=192.168.99.100:12181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@446cdf90
+2016-03-10 14:26:29,469 [myid:] - INFO  [main:ZooKeeper@438] - Initiating client connection, connectString=192.168.99.100:2182 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@446cdf90
 Welcome to ZooKeeper!
-2016-03-10 14:26:29,504 [myid:] - INFO  [main-SendThread(192.168.99.100:12181):ClientCnxn$SendThread@1032] - Opening socket connection to server 192.168.99.100/192.168.99.100:12181. Will not attempt to authenticate using SASL (unknown error)
+2016-03-10 14:26:29,504 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@1032] - Opening socket connection to server 192.168.99.100/192.168.99.100:2182. Will not attempt to authenticate using SASL (unknown error)
 JLine support is enabled
-2016-03-10 14:26:29,640 [myid:] - INFO  [main-SendThread(192.168.99.100:12181):ClientCnxn$SendThread@876] - Socket connection established to 192.168.99.100/192.168.99.100:12181, initiating session
-2016-03-10 14:26:29,698 [myid:] - INFO  [main-SendThread(192.168.99.100:12181):ClientCnxn$SendThread@1299] - Session establishment complete on server 192.168.99.100/192.168.99.100:12181, sessionid = 0x1535ef9701c0001, negotiated timeout = 30000
+2016-03-10 14:26:29,640 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@876] - Socket connection established to 192.168.99.100/192.168.99.100:2182, initiating session
+2016-03-10 14:26:29,698 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@1299] - Session establishment complete on server 192.168.99.100/192.168.99.100:2182, sessionid = 0x1535ef9701c0001, negotiated timeout = 30000
 
 WATCHER::
 
 WatchedEvent state:SyncConnected type:None path:null
-[zk: 192.168.99.100:12181(CONNECTED) 0]
+[zk: 192.168.99.100:2182(CONNECTED) 0]
 ```
 
 
@@ -78,7 +78,7 @@ $ docker network create --subnet=172.18.0.0/16 network1
 ### 2. Start 1st ZooKeeper
 
 ```sh
-$ docker run -d -p 12181:2181 --net=network1 --ip 172.18.0.2 --name zookeeper1 \
+$ docker run -d -p 2182:2181 --net=network1 --ip 172.18.0.2 --name zookeeper1 \
     -e ZOOKEEPER_ID=1 \
     -e ZOOKEEPER_SERVER_1=172.18.0.2 \
     -e ZOOKEEPER_SERVER_2=172.18.0.3 \
@@ -90,7 +90,7 @@ fc366f620f79de1385a19eacf2ec1d126eaca7e497dda126dda51bf6e9463b2c
 ### 3. Start 2nd ZooKeeper
 
 ```sh
-$ docker run -d -p 22181:2181 --net=network1 --ip 172.18.0.3 --name zookeeper2 \
+$ docker run -d -p 2183:2181 --net=network1 --ip 172.18.0.3 --name zookeeper2 \
     -e ZOOKEEPER_ID=2 \
     -e ZOOKEEPER_SERVER_1=172.18.0.2 \
     -e ZOOKEEPER_SERVER_2=172.18.0.3 \
@@ -102,7 +102,7 @@ d0c05513b4fdd46574db8c455fe8cd720a80bbd822b9ea3f65ed3a5ef6f57a17
 ### 4. Start 3rd ZooKeeper
 
 ```sh
-$ docker run -d -p 32181:2181 --net=network1 --ip 172.18.0.4 --name zookeeper3 \
+$ docker run -d -p 2184:2181 --net=network1 --ip 172.18.0.4 --name zookeeper3 \
     -e ZOOKEEPER_ID=3 \
     -e ZOOKEEPER_SERVER_1=172.18.0.2 \
     -e ZOOKEEPER_SERVER_2=172.18.0.3 \
@@ -116,9 +116,9 @@ $ docker run -d -p 32181:2181 --net=network1 --ip 172.18.0.4 --name zookeeper3 \
 ```sh
 $ docker ps
 CONTAINER ID        IMAGE                                 COMMAND                  CREATED             STATUS              PORTS                                         NAMES
-432afd32772c        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   9 seconds ago       Up 9 seconds        2888/tcp, 3888/tcp, 0.0.0.0:32181->2181/tcp   zookeeper3
-d0c05513b4fd        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   19 seconds ago      Up 19 seconds       2888/tcp, 3888/tcp, 0.0.0.0:22181->2181/tcp   zookeeper2
-fc366f620f79        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   32 seconds ago      Up 31 seconds       2888/tcp, 3888/tcp, 0.0.0.0:12181->2181/tcp   zookeeper1
+432afd32772c        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   9 seconds ago       Up 9 seconds        2888/tcp, 3888/tcp, 0.0.0.0:2184->2181/tcp   zookeeper3
+d0c05513b4fd        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   19 seconds ago      Up 19 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2183->2181/tcp   zookeeper2
+fc366f620f79        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"   32 seconds ago      Up 31 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper1
 ```
 
 ### 6. Get container IP of 1st ZooKeeper
@@ -152,8 +152,8 @@ $ docker-machine ip default
 ### 10. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
-$ /Users/mosuka/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server 192.168.99.100:12181
-Connecting to 192.168.99.100:12181
+$ /Users/mosuka/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server 192.168.99.100:2182
+Connecting to 192.168.99.100:2182
 2016-03-10 14:26:29,460 [myid:] - INFO  [main:Environment@100] - Client environment:zookeeper.version=3.4.8--1, built on 02/06/2016 03:18 GMT
 2016-03-10 14:26:29,463 [myid:] - INFO  [main:Environment@100] - Client environment:host.name=172.17.4.1
 2016-03-10 14:26:29,463 [myid:] - INFO  [main:Environment@100] - Client environment:java.version=1.8.0_65
@@ -169,15 +169,15 @@ Connecting to 192.168.99.100:12181
 2016-03-10 14:26:29,467 [myid:] - INFO  [main:Environment@100] - Client environment:user.name=mosuka
 2016-03-10 14:26:29,467 [myid:] - INFO  [main:Environment@100] - Client environment:user.home=/Users/mosuka
 2016-03-10 14:26:29,468 [myid:] - INFO  [main:Environment@100] - Client environment:user.dir=/Users/mosuka
-2016-03-10 14:26:29,469 [myid:] - INFO  [main:ZooKeeper@438] - Initiating client connection, connectString=192.168.99.100:12181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@446cdf90
+2016-03-10 14:26:29,469 [myid:] - INFO  [main:ZooKeeper@438] - Initiating client connection, connectString=192.168.99.100:2182 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@446cdf90
 Welcome to ZooKeeper!
-2016-03-10 14:26:29,504 [myid:] - INFO  [main-SendThread(192.168.99.100:12181):ClientCnxn$SendThread@1032] - Opening socket connection to server 192.168.99.100/192.168.99.100:12181. Will not attempt to authenticate using SASL (unknown error)
+2016-03-10 14:26:29,504 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@1032] - Opening socket connection to server 192.168.99.100/192.168.99.100:2182. Will not attempt to authenticate using SASL (unknown error)
 JLine support is enabled
-2016-03-10 14:26:29,640 [myid:] - INFO  [main-SendThread(192.168.99.100:12181):ClientCnxn$SendThread@876] - Socket connection established to 192.168.99.100/192.168.99.100:12181, initiating session
-2016-03-10 14:26:29,698 [myid:] - INFO  [main-SendThread(192.168.99.100:12181):ClientCnxn$SendThread@1299] - Session establishment complete on server 192.168.99.100/192.168.99.100:12181, sessionid = 0x1535ef9701c0001, negotiated timeout = 30000
+2016-03-10 14:26:29,640 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@876] - Socket connection established to 192.168.99.100/192.168.99.100:2182, initiating session
+2016-03-10 14:26:29,698 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@1299] - Session establishment complete on server 192.168.99.100/192.168.99.100:2182, sessionid = 0x1535ef9701c0001, negotiated timeout = 30000
 
 WATCHER::
 
 WatchedEvent state:SyncConnected type:None path:null
-[zk: 192.168.99.100:12181(CONNECTED) 0]
+[zk: 192.168.99.100:2182(CONNECTED) 0]
 ```
