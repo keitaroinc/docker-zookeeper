@@ -20,21 +20,22 @@ d98212b5603d        mosuka/docker-zookeeper:release-3.4   "/usr/local/bin/docke"
 ### 3. Get container IP
 
 ```sh
-$ docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper
-172.17.0.2
+$ ZOOKEEPER_CONTAINER_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper)
+$ echo ${ZOOKEEPER_CONTAINER_IP}
 ```
 
 ### 4. Get host IP
 
 ```sh
-$ docker-machine ip default
+$ ZOOKEEPER_HOST_IP=$(docker-machine ip default)
+$ echo ${ZOOKEEPER_HOST_IP}
 192.168.99.100
 ```
 
 ### 5. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
-$ ${HOME}/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server 192.168.99.100:2182
+$ ${HOME}/zookeeper/zookeeper-3.4.8/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:2182
 Connecting to 192.168.99.100:2182
 2016-03-10 14:26:29,460 [myid:] - INFO  [main:Environment@100] - Client environment:zookeeper.version=3.4.8--1, built on 02/06/2016 03:18 GMT
 2016-03-10 14:26:29,463 [myid:] - INFO  [main:Environment@100] - Client environment:host.name=172.17.4.1
