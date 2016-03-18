@@ -90,7 +90,7 @@ function start() {
     START_OPTS="${START_OPTS} --foreground"
   fi
 
-  $ZOOKEEPER_PREFIX/bin/zkEnsemble.sh start ${START_OPTS}
+  ${ZOOKEEPER_PREFIX}/bin/zkEnsemble.sh start ${START_OPTS}
 }
 
 # Stop function.
@@ -104,7 +104,7 @@ function stop() {
     STOP_OPTS="${STOP_OPTS} --clientport=${CLIENT_PORT}"
   fi
 
-  $ZOOKEEPER_PREFIX/bin/zkEnsemble.sh stop ${STOP_OPTS}
+  ${ZOOKEEPER_PREFIX}/bin/zkEnsemble.sh stop ${STOP_OPTS}
 }
 
 trap "stop; exit 1" TERM KILL INT QUIT
