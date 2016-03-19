@@ -24,87 +24,212 @@
 # USE the trap if you need to also do manual cleanup after the service is stopped,
 #     or need to start multiple services in the one container
 
-DETECTED_IP=$(
+# IP detection.
+DETECTED_IP_LIST=($(
   ip addr show | grep -e "inet[^6]" | \
     sed -e "s/.*inet[^6][^0-9]*\([0-9.]*\)[^0-9]*.*/\1/" | \
     grep -v "^127\."
-)
+))
+DETECTED_IP=${DETECTED_IP_LIST[0]}
 
 # Set environment variables.
 ZOOKEEPER_PREFIX=${ZOOKEEPER_PREFIX:-/opt/zookeeper}
-SEED=${SEED:-/opt/zookeeper}
-IP=${IP:-${DETECTED_IP}}
-CLIENT_PORT=${CLIENT_PORT:-2181}
-PEER_PORT=${PEER_PORT:-2888}
-ELECTION_PORT=${ELECTION_PORT:-3888}
-ROLE=${ROLE:-participant}
-CLIENT_IP=${CLIENT_IP:-0.0.0.0}
-ZOOCFGDIR=${ZOOCFGDIR:-${ZOOKEEPER_PREFIX}/conf}
 ZOO_DATADIR=${ZOO_DATADIR:-${ZOOKEEPER_PREFIX}/data}
-FOREGROUND=${FOREGROUND:-1}
+ZOOCFGDIR=${ZOOCFGDIR:-${ZOOKEEPER_PREFIX}/conf}
+ZOOCFG=${ZOOCFG:-${ZOOCFGDIR}/zoo.cfg}
+
+ZOOKEEPER_SEED_HOST=${ZOOKEEPER_SEED_HOST:-""}
+ZOOKEEPER_SEED_PORT=${ZOOKEEPER_SEED_PORT:-2181}
+
+ZOOKEEPER_ID=""
+ZOOKEEPER_HOST=${ZOOKEEPER_HOST:-${DETECTED_IP}}
+ZOOKEEPER_CLIENT_PORT=${ZOOKEEPER_CLIENT_PORT:-2181}
+ZOOKEEPER_PEER_PORT=${ZOOKEEPER_PEER_PORT:-2888}
+ZOOKEEPER_ELECTION_PORT=${ZOOKEEPER_ELECTION_PORT:-3888}
+ZOOKEEPER_ROLE=${ZOOKEEPER_ROLE:-participant}
+ZOOKEEPER_CLIENT_IP=${ZOOKEEPER_CLIENT_IP:-0.0.0.0}
+
+ZOOKEEPER_TICK_TIME=${ZOOKEEPER_TICK_TIME:-2000}
+ZOOKEEPER_INIT_LIMIT=${ZOOKEEPER_INIT_LIMIT:-10}
+ZOOKEEPER_SYNC_LIMIT=${ZOOKEEPER_SYNC_LIMIT:-5}
+ZOOKEEPER_MAX_CLIENT_CNXNS=${ZOOKEEPER_MAX_CLIENT_CNXNS:-60}
+ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT=${ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT:-3}
+ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL=${ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL:-1}
 
 # Show environment variables.
 echo "ZOOKEEPER_PREFIX=${ZOOKEEPER_PREFIX}"
-echo "SEED=${SEED}"
-echo "IP=${IP}"
-echo "CLIENT_PORT=${CLIENT_PORT}"
-echo "PEER_PORT=${PEER_PORT}"
-echo "ELECTION_PORT=${ELECTION_PORT}"
-echo "ROLE=${ROLE}"
-echo "CLIENT_IP=${CLIENT_IP}"
-echo "ZOOCFGDIR=${ZOOCFGDIR}"
 echo "ZOO_DATADIR=${ZOO_DATADIR}"
-echo "FOREGROUND=${FOREGROUND}"
+echo "ZOOCFGDIR=${ZOOCFGDIR}"
+echo "ZOOCFG=${ZOOCFG}"
+
+echo "ZOOKEEPER_SEED_HOST=${ZOOKEEPER_SEED_HOST}"
+echo "ZOOKEEPER_SEED_PORT=${ZOOKEEPER_SEED_PORT}"
+
+echo "ZOOKEEPER_ID=${ZOOKEEPER_ID}"
+echo "ZOOKEEPER_HOST=${ZOOKEEPER_HOST}"
+echo "ZOOKEEPER_CLIENT_PORT=${ZOOKEEPER_CLIENT_PORT}"
+echo "ZOOKEEPER_PEER_PORT=${ZOOKEEPER_PEER_PORT}"
+echo "ZOOKEEPER_ELECTION_PORT=${ZOOKEEPER_ELECTION_PORT}"
+echo "ZOOKEEPER_ROLE=${ZOOKEEPER_ROLE}"
+echo "ZOOKEEPER_CLIENT_IP=${ZOOKEEPER_CLIENT_IP}"
+
+echo "ZOOKEEPER_TICK_TIME=${ZOOKEEPER_TICK_TIME}"
+echo "ZOOKEEPER_INIT_LIMIT=${ZOOKEEPER_INIT_LIMIT}"
+echo "ZOOKEEPER_SYNC_LIMIT=${ZOOKEEPER_SYNC_LIMIT}"
+echo "ZOOKEEPER_MAX_CLIENT_CNXNS=${ZOOKEEPER_MAX_CLIENT_CNXNS}"
+echo "ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT=${ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT}"
+echo "ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL=${ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL}"
+
+# Make directories.
+mkdir -p ${ZOOCFGDIR}
+mkdir -p ${ZOO_DATADIR}
 
 # Start function
 function start() {
-  START_OPTS=""
-  if [ -n "${SEED}" ]; then
-    START_OPTS="${START_OPTS} --seed=${SEED}"
-  fi
-  if [ -n "${IP}" ]; then
-    START_OPTS="${START_OPTS} --ip=${IP}"
-  fi
-  if [ -n "${CLIENT_PORT}" ]; then
-    START_OPTS="${START_OPTS} --clientport=${CLIENT_PORT}"
-  fi
-  if [ -n "${PEER_PORT}" ]; then
-    START_OPTS="${START_OPTS} --peerport=${PEER_PORT}"
-  fi
-  if [ -n "${ELECTION_PORT}" ]; then
-    START_OPTS="${START_OPTS} --electionport=${ELECTION_PORT}"
-  fi
-  if [ -n "${ROLE}" ]; then
-    START_OPTS="${START_OPTS} --role=${ROLE}"
-  fi
-  if [ -n "${CLIENT_IP}" ]; then
-    START_OPTS="${START_OPTS} --clientip=${CLIENT_IP}"
-  fi
-  if [ -n "${ZOOCFGDIR}" ]; then
-    START_OPTS="${START_OPTS} --confdir=${ZOOCFGDIR}"
-  fi
-  if [ -n "${ZOO_DATADIR}" ]; then
-    START_OPTS="${START_OPTS} --datadir=${ZOO_DATADIR}"
-  fi
-  if [ "${FOREGROUND}" == 1 ]; then
-    START_OPTS="${START_OPTS} --foreground"
+  # Generate ZooKeeper server list from the ensemble.
+  declare -a ZOOKEEPER_SERVER_LIST=()
+  if [ -n "${ZOOKEEPER_SEED_HOST}" ]; then
+    RETRY_CNT=10
+    for i in $(seq 1 ${RETRY_CNT})
+    do
+      RESPONSE=$(echo "ruok" | nc ${ZOOKEEPER_SEED_HOST} ${ZOOKEEPER_SEED_PORT})
+      if [ "${RESPONSE}" = "imok" ]; then
+        ZOOKEEPER_SERVER_LIST=($(
+          ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_SEED_HOST}:${ZOOKEEPER_SEED_PORT} get /zookeeper/config | grep -e "^server"
+        ))
+        break
+      fi
+      MAX_SLEEP=10
+      sleep $(((RANDOM % ${MAX_SLEEP}) + 1))
+    done
   fi
 
-  ${ZOOKEEPER_PREFIX}/bin/zkEnsemble.sh start ${START_OPTS}
+  # Generate ZooKeeper ID list.
+  declare -a ZOOKEEPER_ID_LIST=()
+  ZOOKEEPER_ID_LIST=($(
+    for LINE in ${ZOOKEEPER_SERVER_LIST}
+    do
+      echo ${LINE} | cut -d"=" -f1 | cut -d"." -f2
+    done | sort -u -n
+  ))
+
+  # Generate available ZooKeeper ID list
+  declare -a AVAILABLE_ZOOKEEPER_ID_LIST=()
+  AVAILABLE_ZOOKEEPER_ID_LIST=($(
+    diff --old-line-format='' \
+      --new-line-format='%L' \
+      --unchanged-line-format='' \
+      <(printf "%s\n" ${ZOOKEEPER_ID_LIST[@]}) \
+      <(printf "%s\n" $(seq 1 255))
+  ))
+
+  # Detect ZooKeeper ID
+  ZOOKEEPER_ID=${AVAILABLE_ZOOKEEPER_ID_LIST[0]}
+
+  # Generate configuration file.
+  echo "tickTime=${ZOOKEEPER_TICK_TIME}" > ${ZOOCFG}
+  echo "initLimit=${ZOOKEEPER_INIT_LIMIT}" >> ${ZOOCFG}
+  echo "syncLimit=${ZOOKEEPER_SYNC_LIMIT}" >> ${ZOOCFG}
+  echo "dataDir=${ZOO_DATADIR}" >> ${ZOOCFG}
+  echo "maxClientCnxns=${ZOOKEEPER_MAX_CLIENT_CNXNS}" >> ${ZOOCFG}
+  echo "autopurge.snapRetainCount=${ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT}" >> ${ZOOCFG}
+  echo "autopurge.purgeInterval=${ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL}" >> ${ZOOCFG}
+  echo "standaloneEnabled=false" >> ${ZOOCFG}
+  echo "dynamicConfigFile=${ZOOCFG}.dynamic" >> ${ZOOCFG}
+
+  if [ -n "${ZOOKEEPER_SERVER_LIST}" ]; then
+    # Generate dynamic configuration file.
+    echo -n > ${ZOOCFG}.dynamic
+    for LINE in ${ZOOKEEPER_SERVER_LIST}
+    do
+      echo ${LINE} >> ${ZOOCFG}.dynamic
+    done
+    echo "server.${ZOOKEEPER_ID}=${ZOOKEEPER_HOST}:${ZOOKEEPER_PEER_PORT}:${ZOOKEEPER_ELECTION_PORT}:observer;${ZOOKEEPER_CLIENT_IP}:${ZOOKEEPER_CLIENT_PORT}" >> ${ZOOCFG}.dynamic
+
+    # Start ZooKeeper as observer.
+    ${ZOOKEEPER_PREFIX}/bin/zkServer-initialize.sh --configfile ${ZOOCFG} --myid ${ZOOKEEPER_ID} --force
+    ${ZOOKEEPER_PREFIX}/bin/zkServer.sh start {ZOOCFG}
+    
+    sleep 1
+    
+    # Add ZooKeeper to the ensemble as participant.
+    ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_SEED_HOST}:${ZOOKEEPER_SEED_PORT} reconfig -add "server.${ZOOKEEPER_ID}=${ZOOKEEPER_HOST}:${ZOOKEEPER_PEER_PORT}:${ZOOKEEPER_ELECTION_PORT}:${ZOOKEEPER_ROLE};${ZOOKEEPER_CLIENT_IP}:${ZOOKEEPER_CLIENT_PORT}"
+    
+    sleep 1
+    
+    # Stop ZooKeeper.
+    ${ZOOKEEPER_PREFIX}/bin/zkServer.sh stop {ZOOCFG}
+    
+    sleep 1
+    
+    # Modify dynamic configuration file.
+    sed -e "s/^server.${ZOOKEEPER_ID}=.*/server.${ZOOKEEPER_ID}=${ZOOKEEPER_HOST}:${ZOOKEEPER_PEER_PORT}:${ZOOKEEPER_ELECTION_PORT}:${ZOOKEEPER_ROLE};${ZOOKEEPER_CLIENT_IP}:${ZOOKEEPER_CLIENT_PORT}/" ${ZOOCFG}.dynamic > ${ZOOCFG}.dynamic.tmp
+    mv ${ZOOCFG}.dynamic.tmp ${ZOOCFG}.dynamic
+  else
+    # Generate dynamic configuration file.
+    echo "server.${ZOOKEEPER_ID}=${ZOOKEEPER_HOST}:${ZOOKEEPER_PEER_PORT}:${ZOOKEEPER_ELECTION_PORT}:${ZOOKEEPER_ROLE};${ZOOKEEPER_CLIENT_IP}:${ZOOKEEPER_CLIENT_PORT}" > ${ZOOCFG}.dynamic
+  fi
+
+  # Show configuration file.
+  if [ -e ${ZOOCFG} ]; then
+    echo ${ZOOCFG}
+    cat ${ZOOCFG}
+  fi
+  if [ -e ${ZOOCFG}.dynamic ]; then
+    echo ${ZOOCFG}.dynamic
+    cat ${ZOOCFG}.dynamic
+  fi
+
+  # Start ZooKeeper.
+  ${ZOOKEEPER_PREFIX}/bin/zkServer-initialize.sh --configfile ${ZOOCFG} --myid ${ZOOKEEPER_ID} --force
+  ${ZOOKEEPER_PREFIX}/bin/zkServer.sh start ${ZOOCFG}
 }
 
 # Stop function.
 function stop() {
-  # Create a stop options.
-  STOP_OPTS=""
-  if [ -n "${IP}" ]; then
-    STOP_OPTS="${STOP_OPTS} --ip=${IP}"
-  fi
-  if [ -n "${CLIENT_PORT}" ]; then
-    STOP_OPTS="${STOP_OPTS} --clientport=${CLIENT_PORT}"
+  # Generate ZooKeeper server list from the ensemble.
+  declare -a ZOOKEEPER_SERVER_LIST=()
+  if [ -n "${ZOOKEEPER_SEED_HOST}" ]; then
+    RESPONSE=$(echo "ruok" | nc ${ZOOKEEPER_SEED_HOST} ${ZOOKEEPER_SEED_PORT})
+    if [ "${RESPONSE}" = "imok" ]; then
+      ZOOKEEPER_SERVER_LIST=($(
+        ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_SEED_HOST}:${ZOOKEEPER_SEED_PORT} get /zookeeper/config | \
+          grep -e "^server"
+      ))
+    else
+      echo "${ZOOKEEPER_SEED_HOST}:${ZOOKEEPER_SEED_PORT} does not working."
+    fi
   fi
 
-  ${ZOOKEEPER_PREFIX}/bin/zkEnsemble.sh stop ${STOP_OPTS}
+  # Generate ZooKeeper ID list.
+  declare -a ZOOKEEPER_ID_LIST=()
+  ZOOKEEPER_ID_LIST=($(
+    for LINE in ${ZOOKEEPER_SERVER_LIST}
+    do
+      echo ${LINE} | cut -d"=" -f1 | cut -d"." -f2
+    done | sort -u -n
+  ))
+
+  # Detect ZooKeeper ID
+  ZOOKEEPER_ID=$(
+    echo "${ZOOKEEPER_SERVER_LIST[@]}" |\
+      grep -E "^server\.[0-9]+=${ZOOKEEPER_HOST}.*:${ZOOKEEPER_CLIENT_PORT}$" |\
+      cut -d"=" -f1 |\
+      cut -d"." -f2
+  )
+
+  # Check ZooKeeper ID.
+  if [ -n "${ZOOKEEPER_ID}" ]; then
+    # Make sure that node is the last node of the ensemble.
+    if [[ " ${ZOOKEEPER_SERVER_LIST[@]} " != " ${ZOOKEEPER_ID} " ]]; then
+      # Remove ZooKeeper from the ensemble.
+      ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_HOST}:${ZOOKEEPER_CLIENT_PORT} reconfig -remove ${ZOOKEEPER_ID}
+      sleep 1
+    fi
+  fi
+
+  # Stop ZooKeeper.
+  ${ZOOKEEPER_PREFIX}/bin/zkServer.sh stop ${ZOOCFG}
 }
 
 trap "stop; exit 1" TERM KILL INT QUIT
@@ -112,7 +237,7 @@ trap "stop; exit 1" TERM KILL INT QUIT
 # Start
 start
 
-# Start infinitive loop
+# Start infinitive loop.
 while true
 do
  tail -F /dev/null & wait ${!}
