@@ -189,15 +189,14 @@ function start() {
 function stop() {
   # Generate ZooKeeper server list from the ensemble.
   declare -a ZOOKEEPER_SERVER_LIST=()
-  if [ -n "${ZOOKEEPER_SEED_HOST}" ]; then
-    RESPONSE=$(echo "ruok" | nc ${ZOOKEEPER_SEED_HOST} ${ZOOKEEPER_SEED_PORT})
+  if [ -n "${ZOOKEEPER_HOST}" ]; then
+    RESPONSE=$(echo "ruok" | nc ${ZOOKEEPER_HOST} ${ZOOKEEPER_CLIENT_PORT})
     if [ "${RESPONSE}" = "imok" ]; then
       ZOOKEEPER_SERVER_LIST=($(
-        ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_SEED_HOST}:${ZOOKEEPER_SEED_PORT} get /zookeeper/config | \
-          grep -e "^server"
+        ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_HOST}:${ZOOKEEPER_CLIENT_PORT} get /zookeeper/config | grep -e "^server"
       ))
     else
-      echo "${ZOOKEEPER_SEED_HOST}:${ZOOKEEPER_SEED_PORT} does not working."
+      echo "${ZOOKEEPER_HOST}:${ZOOKEEPER_CLIENT_PORT} does not working."
     fi
   fi
 
@@ -212,10 +211,7 @@ function stop() {
 
   # Detect ZooKeeper ID
   ZOOKEEPER_ID=$(
-    echo "${ZOOKEEPER_SERVER_LIST[@]}" |\
-      grep -E "^server\.[0-9]+=${ZOOKEEPER_HOST}.*:${ZOOKEEPER_CLIENT_PORT}$" |\
-      cut -d"=" -f1 |\
-      cut -d"." -f2
+    echo "${ZOOKEEPER_SERVER_LIST[@]}" | grep -E "^server\.[0-9]+=${ZOOKEEPER_HOST}.*:${ZOOKEEPER_CLIENT_PORT}$" | cut -d"=" -f1 | cut -d"." -f2
   )
 
   # Check ZooKeeper ID.
