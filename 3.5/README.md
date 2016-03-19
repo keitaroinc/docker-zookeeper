@@ -78,7 +78,6 @@ $ docker run -d -p 2182:2181 --name zookeeper1 \
     -e ZOOKEEPER_SEED_PORT=2181 \
     mosuka/docker-zookeeper:release-3.5
 
-
 $ docker run -d -p 2182:2181 --name zookeeper1 \
     mosuka/docker-zookeeper:release-3.5
 98be9f02ca78c27f2de65a03eba13541f5a4c7b649a3c42dbbd1e159f9edc445
