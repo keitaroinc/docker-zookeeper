@@ -89,19 +89,19 @@ function start() {
   # Generate ZooKeeper server list from the ensemble.
   declare -a ZOOKEEPER_SERVER_LIST=()
   if [ -n "${ZOOKEEPER_SEED_HOST}" ]; then
-    RETRY_CNT=10
-    for i in $(seq 1 ${RETRY_CNT})
-    do
+#    RETRY_CNT=10
+#    for i in $(seq 1 ${RETRY_CNT})
+#    do
       RESPONSE=$(echo "ruok" | nc ${ZOOKEEPER_SEED_HOST} ${ZOOKEEPER_SEED_PORT})
       if [ "${RESPONSE}" = "imok" ]; then
         ZOOKEEPER_SERVER_LIST=($(
           ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_SEED_HOST}:${ZOOKEEPER_SEED_PORT} get /zookeeper/config | grep -e "^server"
         ))
-        break
+#        break
       fi
-      MAX_SLEEP=10
-      sleep $(((RANDOM % ${MAX_SLEEP}) + 1))
-    done
+#      MAX_SLEEP=10
+#      sleep $(((RANDOM % ${MAX_SLEEP}) + 1))
+#    done
   fi
 
   # Generate ZooKeeper ID list.
