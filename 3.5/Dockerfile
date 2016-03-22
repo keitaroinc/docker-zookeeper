@@ -47,8 +47,9 @@ RUN chmod +x $ZOOKEEPER_PREFIX/bin/zkEnsemble.sh
 ENV ZOOKEEPER_PREFIX ${INSTALL_DIR}/zookeeper-$ZOOKEEPER_VERSION
 RUN chown -R $ZOOKEEPER_USER:$ZOOKEEPER_GROUP $ZOOKEEPER_PREFIX 
 
-# Add start script
+# Add start and stop script
 ADD docker-run.sh /usr/local/bin/
+ADD docker-stop.sh /usr/local/bin/
 
 EXPOSE 2181 2888 3888
 USER $ZOOKEEPER_USER

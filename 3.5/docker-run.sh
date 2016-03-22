@@ -176,55 +176,7 @@ function start() {
   ${ZOOKEEPER_PREFIX}/bin/zkServer.sh start ${ZOOCFG}
 }
 
-# Stop function.
-function stop() {
-  # Generate ZooKeeper server list from the ensemble.
-  declare -a ZOOKEEPER_SERVER_LIST=()
-  if [ -n "${ZOOKEEPER_HOST}" ]; then
-    RESPONSE=$(echo "ruok" | nc ${ZOOKEEPER_HOST} ${ZOOKEEPER_CLIENT_PORT})
-    if [ "${RESPONSE}" = "imok" ]; then
-      ZOOKEEPER_SERVER_LIST=($(
-        ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_HOST}:${ZOOKEEPER_CLIENT_PORT} get /zookeeper/config | grep -e "^server"
-      ))
-    else
-      echo "${ZOOKEEPER_HOST}:${ZOOKEEPER_CLIENT_PORT} does not working."
-    fi
-  fi
-
-  # Generate ZooKeeper ID list.
-  declare -a ZOOKEEPER_ID_LIST=()
-  ZOOKEEPER_ID_LIST=($(
-    for LINE in ${ZOOKEEPER_SERVER_LIST[@]}
-    do
-      echo ${LINE} | cut -d"=" -f1 | cut -d"." -f2
-    done | sort -u -n
-  ))
-
-  # Detect ZooKeeper ID
-  ZOOKEEPER_ID=""
-  for LINE in ${ZOOKEEPER_SERVER_LIST[@]}
-  do
-    ZOOKEEPER_ID=$(
-      echo ${LINE} | grep -E "^server\.[0-9]+=${ZOOKEEPER_HOST}.*:${ZOOKEEPER_CLIENT_PORT}$" | cut -d"=" -f1 | cut -d"." -f2
-    )
-    if [ -n "${ZOOKEEPER_ID}" ]; then
-      break
-    fi
-  done
-
-  # Make sure that node is the last node of the ensemble.
-  if [[ " ${ZOOKEEPER_ID_LIST[@]} " != " ${ZOOKEEPER_ID} " ]]; then
-    echo "NOT LAST NODE"
-    # Remove ZooKeeper from the ensemble.
-    ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_HOST}:${ZOOKEEPER_CLIENT_PORT} reconfig -remove ${ZOOKEEPER_ID}
-    sleep 1
-  fi
-
-  # Stop ZooKeeper.
-  ${ZOOKEEPER_PREFIX}/bin/zkServer.sh stop ${ZOOCFG}
-}
-
-trap "stop; exit 1" TERM KILL INT QUIT
+trap "docker-stop.sh; exit 1" TERM KILL INT QUIT
 
 # Start
 start
