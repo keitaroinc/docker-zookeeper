@@ -41,7 +41,6 @@ ZOOCFG=${ZOOCFG:-${ZOOCFGDIR}/zoo.cfg}
 ZOOKEEPER_SEED_HOST=${ZOOKEEPER_SEED_HOST:-""}
 ZOOKEEPER_SEED_PORT=${ZOOKEEPER_SEED_PORT:-2181}
 
-ZOOKEEPER_ID=""
 ZOOKEEPER_HOST=${ZOOKEEPER_HOST:-${DETECTED_IP}}
 ZOOKEEPER_CLIENT_PORT=${ZOOKEEPER_CLIENT_PORT:-2181}
 ZOOKEEPER_PEER_PORT=${ZOOKEEPER_PEER_PORT:-2888}
@@ -65,7 +64,6 @@ echo "ZOOCFG=${ZOOCFG}"
 echo "ZOOKEEPER_SEED_HOST=${ZOOKEEPER_SEED_HOST}"
 echo "ZOOKEEPER_SEED_PORT=${ZOOKEEPER_SEED_PORT}"
 
-echo "ZOOKEEPER_ID=${ZOOKEEPER_ID}"
 echo "ZOOKEEPER_HOST=${ZOOKEEPER_HOST}"
 echo "ZOOKEEPER_CLIENT_PORT=${ZOOKEEPER_CLIENT_PORT}"
 echo "ZOOKEEPER_PEER_PORT=${ZOOKEEPER_PEER_PORT}"
@@ -89,24 +87,13 @@ function start() {
   # Generate ZooKeeper server list from the ensemble.
   declare -a ZOOKEEPER_SERVER_LIST=()
   if [ -n "${ZOOKEEPER_SEED_HOST}" ]; then
-#    RETRY_CNT=10
-#    for i in $(seq 1 ${RETRY_CNT})
-#    do
-      RESPONSE=$(echo "ruok" | nc ${ZOOKEEPER_SEED_HOST} ${ZOOKEEPER_SEED_PORT})
-      if [ "${RESPONSE}" = "imok" ]; then
-        ZOOKEEPER_SERVER_LIST=($(
-          ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_SEED_HOST}:${ZOOKEEPER_SEED_PORT} get /zookeeper/config | grep -e "^server"
-        ))
-#        break
-      fi
-#      MAX_SLEEP=10
-#      sleep $(((RANDOM % ${MAX_SLEEP}) + 1))
-#    done
+    RESPONSE=$(echo "ruok" | nc ${ZOOKEEPER_SEED_HOST} ${ZOOKEEPER_SEED_PORT})
+    if [ "${RESPONSE}" = "imok" ]; then
+      ZOOKEEPER_SERVER_LIST=($(
+        ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_SEED_HOST}:${ZOOKEEPER_SEED_PORT} get /zookeeper/config | grep -e "^server"
+      ))
+    fi
   fi
-  echo ${ZOOKEEPER_SERVER_LIST[@]}
-  echo ${ZOOKEEPER_SERVER_LIST[0]}
-  echo ${ZOOKEEPER_SERVER_LIST[1]}
-  echo ${ZOOKEEPER_SERVER_LIST[2]}
 
   # Generate ZooKeeper ID list.
   declare -a ZOOKEEPER_ID_LIST=()
@@ -116,7 +103,6 @@ function start() {
       echo ${LINE} | cut -d"=" -f1 | cut -d"." -f2
     done | sort -u -n
   ))
-  echo ${ZOOKEEPER_ID_LIST[@]}
 
   # Generate available ZooKeeper ID list
   declare -a AVAILABLE_ZOOKEEPER_ID_LIST=()
@@ -127,11 +113,9 @@ function start() {
       <(printf "%s\n" ${ZOOKEEPER_ID_LIST[@]}) \
       <(printf "%s\n" $(seq 1 255))
   ))
-  echo ${AVAILABLE_ZOOKEEPER_ID_LIST[@]}
 
   # Detect ZooKeeper ID
   ZOOKEEPER_ID=${AVAILABLE_ZOOKEEPER_ID_LIST[0]}
-  echo ${ZOOKEEPER_ID}
 
   # Generate configuration file.
   echo "tickTime=${ZOOKEEPER_TICK_TIME}" > ${ZOOCFG}
@@ -217,18 +201,23 @@ function stop() {
   ))
 
   # Detect ZooKeeper ID
-  ZOOKEEPER_ID=$(
-    echo "${ZOOKEEPER_SERVER_LIST[@]}" | grep -E "^server\.[0-9]+=${ZOOKEEPER_HOST}.*:${ZOOKEEPER_CLIENT_PORT}$" | cut -d"=" -f1 | cut -d"." -f2
-  )
-
-  # Check ZooKeeper ID.
-  if [ -n "${ZOOKEEPER_ID}" ]; then
-    # Make sure that node is the last node of the ensemble.
-    if [[ " ${ZOOKEEPER_SERVER_LIST[@]} " != " ${ZOOKEEPER_ID} " ]]; then
-      # Remove ZooKeeper from the ensemble.
-      ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_HOST}:${ZOOKEEPER_CLIENT_PORT} reconfig -remove ${ZOOKEEPER_ID}
-      sleep 1
+  ZOOKEEPER_ID=""
+  for LINE in ${ZOOKEEPER_SERVER_LIST[@]}
+  do
+    ZOOKEEPER_ID=$(
+      echo ${LINE} | grep -E "^server\.[0-9]+=${ZOOKEEPER_HOST}.*:${ZOOKEEPER_CLIENT_PORT}$" | cut -d"=" -f1 | cut -d"." -f2
+    )
+    if [ -n "${ZOOKEEPER_ID}" ]; then
+      break
     fi
+  done
+
+  # Make sure that node is the last node of the ensemble.
+  if [[ " ${ZOOKEEPER_ID_LIST[@]} " != " ${ZOOKEEPER_ID} " ]]; then
+    echo "NOT LAST NODE"
+    # Remove ZooKeeper from the ensemble.
+    ${ZOOKEEPER_PREFIX}/bin/zkCli.sh -server ${ZOOKEEPER_HOST}:${ZOOKEEPER_CLIENT_PORT} reconfig -remove ${ZOOKEEPER_ID}
+    sleep 1
   fi
 
   # Stop ZooKeeper.

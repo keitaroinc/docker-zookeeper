@@ -123,7 +123,7 @@ $ echo ${ZOOKEEPER_HOST_IP}
 ### 4. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
-$ $ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:2182 get /zookeeper/config
+$ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:2182 get /zookeeper/config
 Connecting to 192.168.99.101:2182
 2016-03-22 11:21:08,910 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
 2016-03-22 11:21:08,915 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.231.14
