@@ -103,15 +103,20 @@ function start() {
 #      sleep $(((RANDOM % ${MAX_SLEEP}) + 1))
 #    done
   fi
+  echo ${ZOOKEEPER_SERVER_LIST[@]}
+  echo ${ZOOKEEPER_SERVER_LIST[0]}
+  echo ${ZOOKEEPER_SERVER_LIST[1]}
+  echo ${ZOOKEEPER_SERVER_LIST[2]}
 
   # Generate ZooKeeper ID list.
   declare -a ZOOKEEPER_ID_LIST=()
   ZOOKEEPER_ID_LIST=($(
-    for LINE in ${ZOOKEEPER_SERVER_LIST}
+    for LINE in ${ZOOKEEPER_SERVER_LIST[@]}
     do
       echo ${LINE} | cut -d"=" -f1 | cut -d"." -f2
     done | sort -u -n
   ))
+  echo ${ZOOKEEPER_ID_LIST[@]}
 
   # Generate available ZooKeeper ID list
   declare -a AVAILABLE_ZOOKEEPER_ID_LIST=()
@@ -122,9 +127,11 @@ function start() {
       <(printf "%s\n" ${ZOOKEEPER_ID_LIST[@]}) \
       <(printf "%s\n" $(seq 1 255))
   ))
+  echo ${AVAILABLE_ZOOKEEPER_ID_LIST[@]}
 
   # Detect ZooKeeper ID
   ZOOKEEPER_ID=${AVAILABLE_ZOOKEEPER_ID_LIST[0]}
+  echo ${ZOOKEEPER_ID}
 
   # Generate configuration file.
   echo "tickTime=${ZOOKEEPER_TICK_TIME}" > ${ZOOCFG}
@@ -140,7 +147,7 @@ function start() {
   if [ -n "${ZOOKEEPER_SERVER_LIST}" ]; then
     # Generate dynamic configuration file.
     echo -n > ${ZOOCFG}.dynamic
-    for LINE in ${ZOOKEEPER_SERVER_LIST}
+    for LINE in ${ZOOKEEPER_SERVER_LIST[@]}
     do
       echo ${LINE} >> ${ZOOCFG}.dynamic
     done
@@ -203,7 +210,7 @@ function stop() {
   # Generate ZooKeeper ID list.
   declare -a ZOOKEEPER_ID_LIST=()
   ZOOKEEPER_ID_LIST=($(
-    for LINE in ${ZOOKEEPER_SERVER_LIST}
+    for LINE in ${ZOOKEEPER_SERVER_LIST[@]}
     do
       echo ${LINE} | cut -d"=" -f1 | cut -d"." -f2
     done | sort -u -n
