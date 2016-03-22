@@ -148,7 +148,7 @@ function start() {
 
     # Start ZooKeeper as observer.
     ${ZOOKEEPER_PREFIX}/bin/zkServer-initialize.sh --configfile ${ZOOCFG} --myid ${ZOOKEEPER_ID} --force
-    ${ZOOKEEPER_PREFIX}/bin/zkServer.sh start {ZOOCFG}
+    ${ZOOKEEPER_PREFIX}/bin/zkServer.sh start ${ZOOCFG}
     
     sleep 1
     
@@ -158,7 +158,7 @@ function start() {
     sleep 1
     
     # Stop ZooKeeper.
-    ${ZOOKEEPER_PREFIX}/bin/zkServer.sh stop {ZOOCFG}
+    ${ZOOKEEPER_PREFIX}/bin/zkServer.sh stop ${ZOOCFG}
     
     sleep 1
     
