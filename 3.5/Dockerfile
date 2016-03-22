@@ -42,8 +42,7 @@ RUN mkdir -p ${INSTALL_DIR}
 WORKDIR ${INSTALL_DIR}
 RUN curl -L -o ${INSTALL_DIR}/zookeeper-$ZOOKEEPER_VERSION.tar.gz http://archive.apache.org/dist/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
 RUN tar -xzf zookeeper-$ZOOKEEPER_VERSION.tar.gz && rm ${INSTALL_DIR}/zookeeper-$ZOOKEEPER_VERSION.tar.gz
-ENV ZOOKEEPER_PREFIX ${INSTALL_DIR}/zookeeper
-RUN mv ${INSTALL_DIR}/zookeeper-$ZOOKEEPER_VERSION $ZOOKEEPER_PREFIX
+ENV ZOOKEEPER_PREFIX ${INSTALL_DIR}/zookeeper-$ZOOKEEPER_VERSION
 RUN chown -R $ZOOKEEPER_USER:$ZOOKEEPER_GROUP $ZOOKEEPER_PREFIX 
 
 # Add start and stop script
