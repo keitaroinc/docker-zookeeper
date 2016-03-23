@@ -28,12 +28,16 @@ c387ac976421        mosuka/docker-zookeeper:release-3.5   "/usr/local/bin/docke"
 $ ZOOKEEPER_HOST_IP=$(docker-machine ip default)
 $ echo ${ZOOKEEPER_HOST_IP}
 192.168.99.101
+
+$ ZOOKEEPER_HOST_PORT=$(docker inspect -f '{{ $port := index .NetworkSettings.Ports "2181/tcp" }}{{ range $port }}{{ .HostPort }}{{ end }}' zookeeper)
+$ echo ${ZOOKEEPER_HOST_PORT}
+2182
 ```
 
 ### 4. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
-$ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:2182 get /zookeeper/config
+$ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:${ZOOKEEPER_HOST_PORT} get /zookeeper/config
 Connecting to 192.168.99.101:2182
 2016-03-22 12:25:00,298 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
 2016-03-22 12:25:00,306 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=192.168.99.1
@@ -117,12 +121,24 @@ a0c84a6d5923        mosuka/docker-zookeeper:release-3.5   "/usr/local/bin/docke"
 $ ZOOKEEPER_HOST_IP=$(docker-machine ip default)
 $ echo ${ZOOKEEPER_HOST_IP}
 192.168.99.101
+
+$ ZOOKEEPER_1_HOST_PORT=$(docker inspect -f '{{ $port := index .NetworkSettings.Ports "2181/tcp" }}{{ range $port }}{{ .HostPort }}{{ end }}' zookeeper1)
+$ echo ${ZOOKEEPER_1_HOST_PORT}
+2182
+
+$ ZOOKEEPER_2_HOST_PORT=$(docker inspect -f '{{ $port := index .NetworkSettings.Ports "2181/tcp" }}{{ range $port }}{{ .HostPort }}{{ end }}' zookeeper2)
+$ echo ${ZOOKEEPER_2_HOST_PORT}
+2183
+
+$ ZOOKEEPER_3_HOST_PORT=$(docker inspect -f '{{ $port := index .NetworkSettings.Ports "2181/tcp" }}{{ range $port }}{{ .HostPort }}{{ end }}' zookeeper3)
+$ echo ${ZOOKEEPER_3_HOST_PORT}
+2184
 ```
 
 ### 4. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
-$ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:2182 get /zookeeper/config
+$ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:${ZOOKEEPER_1_HOST_PORT} get /zookeeper/config
 Connecting to 192.168.99.101:2182
 2016-03-22 11:21:08,910 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
 2016-03-22 11:21:08,915 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.231.14
@@ -155,7 +171,7 @@ server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
 server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
 version=200000003
 
-$ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:2183 get /zookeeper/config
+$ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:${ZOOKEEPER_2_HOST_PORT} get /zookeeper/config
 Connecting to 192.168.99.101:2183
 2016-03-22 11:21:56,104 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
 2016-03-22 11:21:56,110 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.231.14
@@ -188,7 +204,7 @@ server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
 server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
 version=200000003
 
-$ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:2184 get /zookeeper/config
+$ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:${ZOOKEEPER_3_HOST_PORT} get /zookeeper/config
 Connecting to 192.168.99.101:2184
 2016-03-22 11:22:16,788 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
 2016-03-22 11:22:16,793 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.231.14
