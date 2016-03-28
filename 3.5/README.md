@@ -1,12 +1,21 @@
 # docker-zookeeper
 
-## Standalone ZooKeeper example
+This is a Docker image for Apache ZooKeeper.
 
-### 1. Start standalone ZooKeeper
+## What is ZooKeeper?
+
+[ZooKeeper](https://zookeeper.apache.org) is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services. All of these kinds of services are used in some form or another by distributed applications. Each time they are implemented there is a lot of work that goes into fixing the bugs and race conditions that are inevitable. Because of the difficulty of implementing these kinds of services, applications initially usually skimp on them ,which make them brittle in the presence of change and difficult to manage. Even when done correctly, different implementations of these services lead to management complexity when the applications are deployed.
+
+Learn more about ZooKeeper on the [ZooKeeper Wiki](https://cwiki.apache.org/confluence/display/ZOOKEEPER/Index).
+
+## How to use this Docker image
+
+### Standalone ZooKeeper example
+
+#### 1. Start standalone ZooKeeper
 
 ```sh
-$ docker run -d -p 2182:2181 --name zookeeper \
-    mosuka/docker-zookeeper:release-3.5
+$ docker run -d -p 2182:2181 --name zookeeper mosuka/docker-zookeeper:release-3.5
 c387ac9764215a64afca120ff61acf78851cdf313584a310422876dac3a38a0a
 
 $ ZOOKEEPER_CONTAINER_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper)
@@ -14,7 +23,7 @@ $ echo ${ZOOKEEPER_CONTAINER_IP}
 172.17.0.2
 ```
 
-### 2. Check container ID
+#### 2. Check container ID
 
 ```sh
 $ docker ps
@@ -22,7 +31,7 @@ CONTAINER ID        IMAGE                                 COMMAND               
 c387ac976421        mosuka/docker-zookeeper:release-3.5   "/usr/local/bin/docke"   15 minutes ago      Up 36 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper
 ```
 
-### 3. Get host IP
+#### 3. Get host IP
 
 ```sh
 $ ZOOKEEPER_HOST_IP=$(docker-machine ip default)
@@ -34,7 +43,7 @@ $ echo ${ZOOKEEPER_HOST_PORT}
 2182
 ```
 
-### 4. Connect to ZooKeeper using zkCli.sh on the local machine
+#### 4. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
 $ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:${ZOOKEEPER_HOST_PORT} get /zookeeper/config
@@ -69,11 +78,19 @@ server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
 version=100000000
 ```
 
+#### 5. Stop ZooKeeper
 
+```sh
+$ docker stop zookeeper
+zookeeper
 
-## ZooKeeper ensemble (3 nodes) example
+$ docker rm zookeeper
+zookeeper
+```
 
-### 1. Start ZooKeeper
+### ZooKeeper ensemble (3 nodes) example
+
+#### 1. Start ZooKeeper
 
 ```sh
 $ docker run -d -p 2182:2181 --name zookeeper1 \
@@ -105,7 +122,7 @@ $ echo ${ZOOKEEPER_3_CONTAINER_IP}
 172.17.0.4
 ```
 
-### 2. Check container ID
+#### 2. Check container ID
 
 ```sh
 $ docker ps
@@ -115,7 +132,7 @@ a0c84a6d5923        mosuka/docker-zookeeper:release-3.5   "/usr/local/bin/docke"
 98be9f02ca78        mosuka/docker-zookeeper:release-3.5   "/usr/local/bin/docke"   17 minutes ago      Up 2 minutes        2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper1
 ```
 
-### 3. Get host IP
+#### 3. Get host IP
 
 ```sh
 $ ZOOKEEPER_HOST_IP=$(docker-machine ip default)
@@ -135,7 +152,7 @@ $ echo ${ZOOKEEPER_3_HOST_PORT}
 2184
 ```
 
-### 4. Connect to ZooKeeper using zkCli.sh on the local machine
+#### 4. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
 $ ${HOME}/zookeeper/zookeeper-3.5.1-alpha/bin/zkCli.sh -server ${ZOOKEEPER_HOST_IP}:${ZOOKEEPER_1_HOST_PORT} get /zookeeper/config
@@ -236,4 +253,18 @@ server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
 server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
 server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
 version=200000003
+```
+
+#### 5. Stop ZooKeeper
+
+```sh
+$ docker stop zookeeper1 zookeeper2 zookeeper3
+zookeeper1
+zookeeper2
+zookeeper3
+
+$ docker rm zookeeper1 zookeeper2 zookeeper3
+zookeeper1
+zookeeper2
+zookeeper3
 ```
