@@ -20,38 +20,35 @@
 #
 
 FROM java:openjdk-7-jre
+
 MAINTAINER Minoru Osuka "minoru.osuka@gmail.com"
 
-RUN apt-get update \
- && apt-get install -y wget tar net-tools netcat jq \
- && apt-get clean
-
-# Add group
 ENV ZOOKEEPER_GROUP zookeeper
-RUN groupadd -r $ZOOKEEPER_GROUP
-
-# Add user
 ENV ZOOKEEPER_USER zookeeper
 ENV ZOOKEEPER_UID 2181
-RUN useradd -r -u $ZOOKEEPER_UID -g $ZOOKEEPER_GROUP $ZOOKEEPER_USER
+ENV HOME /home/${ZOOKEEPER_USER}
 
-# Install ZooKeeper
-ENV INSTALL_DIR=/opt
+RUN apt-get update && \
+    apt-get install -y iproute netcat dnsutils curl tar && \
+    apt-get clean && \
+    mkdir -p ${HOME} && \
+    groupadd -r ${ZOOKEEPER_GROUP} && \
+    useradd -u ${ZOOKEEPER_UID} -g ${ZOOKEEPER_GROUP} -d ${HOME} ${ZOOKEEPER_USER} && \
+    chown -R ${ZOOKEEPER_USER}:${ZOOKEEPER_GROUP} ${HOME}
+ 
+USER ${ZOOKEEPER_USER}
+WORKDIR ${HOME}
+
 ENV ZOOKEEPER_VERSION 3.5.1-alpha
-RUN mkdir -p ${INSTALL_DIR}
-WORKDIR ${INSTALL_DIR}
-RUN curl -L -o ${INSTALL_DIR}/zookeeper-$ZOOKEEPER_VERSION.tar.gz http://archive.apache.org/dist/zookeeper/zookeeper-$ZOOKEEPER_VERSION/zookeeper-$ZOOKEEPER_VERSION.tar.gz
-RUN tar -xzf zookeeper-$ZOOKEEPER_VERSION.tar.gz && rm ${INSTALL_DIR}/zookeeper-$ZOOKEEPER_VERSION.tar.gz
-ENV ZOOKEEPER_PREFIX ${INSTALL_DIR}/zookeeper-$ZOOKEEPER_VERSION
-RUN chown -R $ZOOKEEPER_USER:$ZOOKEEPER_GROUP $ZOOKEEPER_PREFIX 
+RUN curl -L -o ${HOME}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz http://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
+    tar -C ${HOME} -xf ${HOME}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
+    rm ${HOME}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz
 
-# Add start and stop script
-ADD docker-run.sh /usr/local/bin/
-ADD docker-stop.sh /usr/local/bin/
+ENV ZOOKEEPER_PREFIX ${HOME}/zookeeper-${ZOOKEEPER_VERSION}
+
+ADD docker-run.sh /usr/local/bin
+ADD docker-stop.sh /usr/local/bin
 
 EXPOSE 2181 2888 3888
-USER $ZOOKEEPER_USER
-
-WORKDIR $ZOOKEEPER_PREFIX
 
 CMD ["/usr/local/bin/docker-run.sh"]
