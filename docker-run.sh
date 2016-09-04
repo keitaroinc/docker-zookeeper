@@ -6,7 +6,8 @@ DETECTED_IP_LIST=($(
     sed -e "s/.*inet[^6][^0-9]*\([0-9.]*\)[^0-9]*.*/\1/" | \
     grep -v "^127\."
 ))
-DETECTED_IP=${DETECTED_IP_LIST[0]}
+DETECTED_IP=${DETECTED_IP_LIST[0]:-127.0.0.1}
+echo "DETECTED_IP=${DETECTED_IP}"
 
 # Set environment variables.
 ZOOKEEPER_PREFIX=${ZOOKEEPER_PREFIX:-/opt/zookeeper}

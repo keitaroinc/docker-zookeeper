@@ -13,12 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#
-# If this scripted is run out of /usr/bin or some other system bin directory
-# it should be linked to and not copied. Things like java jar files are found
-# relative to the canonical path of this script.
-#
-
 FROM java:openjdk-7-jre
 
 MAINTAINER Minoru Osuka "minoru.osuka@gmail.com"

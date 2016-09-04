@@ -95,7 +95,7 @@ zookeeper
 zookeeper
 ```
 
-### ZooKeeper ensemble (3 nodes) example using ZOOKEEPER_SEED_HOST and ZOOKEEPER_SEED_PORT
+### ZooKeeper ensemble (3 nodes) example using ZOOKEEPER_SEED_HOST
 
 #### 1. Start ZooKeeper
 
@@ -271,10 +271,6 @@ zookeeper3
 ### ZooKeeper ensemble (3 nodes) example using ZOOKEEPER_HOST_LIST
 
 #### 1. Start ZooKeeper
-
-docker run -d -p 2182:2181 --name zookeeper1 -e ZOOKEEPER_HOST_LIST="" mosuka/docker-zookeeper:3.5.1
-docker run -d -p 2183:2181 --name zookeeper2 -e ZOOKEEPER_HOST_LIST="172.17.0.2" mosuka/docker-zookeeper:3.5.1
-docker run -d -p 2184:2181 --name zookeeper3 -e ZOOKEEPER_HOST_LIST="172.17.0.2 172.17.0.3" mosuka/docker-zookeeper:3.5.1
 
 ```sh
 $ docker run -d -p 2182:2181 --name zookeeper1 -e ZOOKEEPER_HOST_LIST="" mosuka/docker-zookeeper:3.5.1
