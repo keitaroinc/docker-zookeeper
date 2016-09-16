@@ -86,7 +86,7 @@ function start() {
       for i in `seq ${ZOOKEEPER_ACCESS_RETRY_COUNT}`
       do
         ZOOKEEPER_CONFIG=($(
-          echo "conf" | nc ${ZOOKEEPER_SEED_HOST} ${ZOOKEEPER_SEED_PORT} | grep -E "^server\.[0-9]{1,3}=.*" | grep -v -E "^server\.[0-9]{1,3}=${ZOOKEEPER_HOST}:.*"
+          echo "conf" | nc ${ZOOKEEPER_SEED_HOST} ${ZOOKEEPER_SEED_PORT} | grep -E "^server\.[0-9]{1,3}=.*" | grep -v -E "^server\.[0-9]{1,3}=${ZOOKEEPER_HOST}:.*:${ZOOKEEPER_CLIENT_PORT}$"
         ))
         if [ -n "${ZOOKEEPER_CONFIG}" ]; then
           break
@@ -96,13 +96,19 @@ function start() {
     fi
   else
     # Generate dynamic configuration file from ${ZOOKEEPER_HOST_LIST}.
-    TMP_ZOOKEEPER_ID=1
     for HOST in ${ZOOKEEPER_HOST_LIST}
     do
-      if [ ${HOST} != ${ZOOKEEPER_HOST} ]; then
-        ZOOKEEPER_CONFIG=("${ZOOKEEPER_CONFIG[@]}" "server.${TMP_ZOOKEEPER_ID}=${HOST}:${ZOOKEEPER_PEER_PORT}:${ZOOKEEPER_ELECTION_PORT}:${ZOOKEEPER_ROLE};${ZOOKEEPER_CLIENT_IP}:${ZOOKEEPER_CLIENT_PORT}")
-      fi
-      let TMP_ZOOKEEPER_ID=${TMP_ZOOKEEPER_ID}+1
+      for i in `seq ${ZOOKEEPER_ACCESS_RETRY_COUNT}`
+      do
+        if [ ${HOST} != ${ZOOKEEPER_HOST} ]; then
+          TMP_ZOOKEEPER_CONFIG=$(echo "conf" | nc ${HOST} ${ZOOKEEPER_CLIENT_PORT} | grep -E "^server\.[0-9]{1,3}=${HOST}:.*:${ZOOKEEPER_CLIENT_PORT}$")
+          if [ -n "${TMP_ZOOKEEPER_CONFIG}" ]; then
+            ZOOKEEPER_CONFIG=("${ZOOKEEPER_CONFIG[@]}" "${TMP_ZOOKEEPER_CONFIG}")
+            break
+          fi
+          sleep ${ZOOKEEPER_ACCESS_INTERVAL}
+        fi
+      done
     done
   fi
 
@@ -149,8 +155,7 @@ function start() {
 
       sleep ${ZOOKEEPER_ACCESS_INTERVAL}
 
-      NEW_ZOOKEEPER_HOST=$(echo "conf" | nc ${ZOOKEEPER_HOST} ${ZOOKEEPER_CLIENT_PORT} | grep -E "^server\.[0-9]{1,3}=.*" | grep -E "^server\.[0-9]{1,3}=${ZOOKEEPER_HOST}:.*" | cut -d"=" -f2 | awk -F : '{print $1}')
-      echo "${i} NEW_ZOOKEEPER_HOST=${NEW_ZOOKEEPER_HOST}"
+      NEW_ZOOKEEPER_HOST=$(echo "conf" | nc ${ZOOKEEPER_HOST} ${ZOOKEEPER_CLIENT_PORT} | grep -E "^server\.[0-9]{1,3}=${ZOOKEEPER_HOST}:.*:${ZOOKEEPER_CLIENT_PORT}" | cut -d"=" -f2 | awk -F : '{print $1}')
       if [ "${NEW_ZOOKEEPER_HOST}" = "${ZOOKEEPER_HOST}" ]; then
         break
       fi

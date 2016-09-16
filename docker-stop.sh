@@ -57,7 +57,7 @@ function stop() {
   for LINE in ${ZOOKEEPER_SERVER_LIST[@]}
   do
     ZOOKEEPER_ID=$(
-      echo ${LINE} | grep -E "^server\.[0-9]+=${ZOOKEEPER_HOST}.*:${ZOOKEEPER_CLIENT_PORT}$" | cut -d"=" -f1 | cut -d"." -f2
+      echo ${LINE} | grep -E "^server\.[0-9]+=${ZOOKEEPER_HOST}:.*:${ZOOKEEPER_CLIENT_PORT}$" | cut -d"=" -f1 | cut -d"." -f2
     )
     if [ -n "${ZOOKEEPER_ID}" ]; then
       break
