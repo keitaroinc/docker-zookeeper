@@ -36,9 +36,10 @@ WORKDIR ${HOME}
 ENV ZOOKEEPER_VERSION 3.5.1-alpha
 RUN curl -L -o ${HOME}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz http://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
     tar -C ${HOME} -xf ${HOME}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
+    mv ${HOME}/zookeeper-${ZOOKEEPER_VERSION} ${HOME}/zookeeper && \
     rm ${HOME}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz
 
-ENV ZOOKEEPER_PREFIX ${HOME}/zookeeper-${ZOOKEEPER_VERSION}
+ENV ZOOKEEPER_PREFIX ${HOME}/zookeeper
 
 ADD docker-run.sh /usr/local/bin
 ADD docker-stop.sh /usr/local/bin

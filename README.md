@@ -12,8 +12,7 @@ Learn more about ZooKeeper on the [ZooKeeper Wiki](https://cwiki.apache.org/conf
 
 ```
 $ git clone git@github.com:mosuka/docker-zookeeper.git ${HOME}/git/docker-zookeeper
-$ cd ${HOME}/git/docker-zookeeper
-$ docker build -t mosuka/docker-zookeeper:latest .
+$ docker build -t mosuka/docker-zookeeper:latest ${HOME}/git/docker-zookeeper
 ```
 
 ## How to pull this Docker image
@@ -30,7 +29,7 @@ $ docker pull mosuka/docker-zookeeper:latest
 
 ```sh
 $ docker run -d -p 2182:2181 --name zookeeper mosuka/docker-zookeeper:latest
-192ae82595d63c5909fbab10f67b0c46c1bbcd1bb2640c4e20115af0de2ac81b
+ff94d300c718bd1c1c7f33cda0fc1b7f07f6c7914893877cafc13222db620c5c
 
 $ ZOOKEEPER_CONTAINER_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper)
 $ echo ${ZOOKEEPER_CONTAINER_IP}
@@ -42,7 +41,7 @@ $ echo ${ZOOKEEPER_CONTAINER_IP}
 ```sh
 $ docker ps
 CONTAINER ID        IMAGE                            COMMAND                  CREATED             STATUS              PORTS                                        NAMES
-192ae82595d6        mosuka/docker-zookeeper:latest   "/usr/local/bin/docke"   24 minutes ago      Up 20 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper
+ff94d300c718        mosuka/docker-zookeeper:latest   "/usr/local/bin/docke"   27 seconds ago      Up 25 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper
 ```
 
 #### 3. Get host IP
@@ -51,7 +50,7 @@ CONTAINER ID        IMAGE                            COMMAND                  CR
 $ ZOOKEEPER_HOST_IP=$(docker-machine ip default)
 $ ZOOKEEPER_HOST_IP=${ZOOKEEPER_HOST_IP:-127.0.0.1}
 $ echo ${ZOOKEEPER_HOST_IP}
-192.168.99.101
+127.0.0.1
 
 $ ZOOKEEPER_HOST_PORT=$(docker inspect -f '{{ $port := index .NetworkSettings.Ports "2181/tcp" }}{{ range $port }}{{ .HostPort }}{{ end }}' zookeeper)
 $ echo ${ZOOKEEPER_HOST_PORT}
@@ -61,30 +60,30 @@ $ echo ${ZOOKEEPER_HOST_PORT}
 #### 4. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
-$ docker exec -i -t zookeeper ./zookeeper-3.5.1-alpha/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
-Connecting to 127.0.0.1:2182
-2016-09-11 10:40:40,246 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
-2016-09-11 10:40:40,253 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=10.0.1.19
-2016-09-11 10:40:40,253 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.8.0_65
-2016-09-11 10:40:40,258 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
-2016-09-11 10:40:40,258 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre
-2016-09-11 10:40:40,258 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
-2016-09-11 10:40:40,259 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/Users/mosuka/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
-2016-09-11 10:40:40,259 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/var/folders/99/p369dv7n5sqdl9rdvyx0vqzr0000gn/T/
-2016-09-11 10:40:40,259 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
-2016-09-11 10:40:40,259 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Mac OS X
-2016-09-11 10:40:40,260 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=x86_64
-2016-09-11 10:40:40,260 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=10.11.6
-2016-09-11 10:40:40,260 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=mosuka
-2016-09-11 10:40:40,260 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/Users/mosuka
-2016-09-11 10:40:40,260 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/Users/mosuka/git/docker-flume
-2016-09-11 10:40:40,260 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=117MB
-2016-09-11 10:40:40,262 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=228MB
-2016-09-11 10:40:40,262 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=123MB
-2016-09-11 10:40:40,268 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=127.0.0.1:2182 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@593634ad
-2016-09-11 10:40:40,321 [myid:] - INFO  [main-SendThread(127.0.0.1:2182):ClientCnxn$SendThread@1138] - Opening socket connection to server 127.0.0.1/127.0.0.1:2182. Will not attempt to authenticate using SASL (unknown error)
-2016-09-11 10:40:40,442 [myid:] - INFO  [main-SendThread(127.0.0.1:2182):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /127.0.0.1:57684, server: 127.0.0.1/127.0.0.1:2182
-2016-09-11 10:40:40,543 [myid:] - INFO  [main-SendThread(127.0.0.1:2182):ClientCnxn$SendThread@1400] - Session establishment complete on server 127.0.0.1/127.0.0.1:2182, sessionid = 0x10001fda53c0000, negotiated timeout = 30000
+$ docker exec -i -t zookeeper ./zookeeper/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
+Connecting to localhost:2181
+2016-09-20 00:52:05,612 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
+2016-09-20 00:52:05,616 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=ff94d300c718
+2016-09-20 00:52:05,617 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.7.0_111
+2016-09-20 00:52:05,623 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
+2016-09-20 00:52:05,624 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/usr/lib/jvm/java-7-openjdk-amd64/jre
+2016-09-20 00:52:05,625 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
+2016-09-20 00:52:05,625 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib
+2016-09-20 00:52:05,626 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/tmp
+2016-09-20 00:52:05,626 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
+2016-09-20 00:52:05,627 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Linux
+2016-09-20 00:52:05,627 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=amd64
+2016-09-20 00:52:05,628 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=4.4.20-moby
+2016-09-20 00:52:05,628 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=zookeeper
+2016-09-20 00:52:05,629 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/home/zookeeper
+2016-09-20 00:52:05,629 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/home/zookeeper
+2016-09-20 00:52:05,630 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=25MB
+2016-09-20 00:52:05,632 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=227MB
+2016-09-20 00:52:05,633 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=30MB
+2016-09-20 00:52:05,638 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=localhost:2181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@28b2311b
+2016-09-20 00:52:05,674 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1138] - Opening socket connection to server localhost/0:0:0:0:0:0:0:1:2181. Will not attempt to authenticate using SASL (unknown error)
+2016-09-20 00:52:05,690 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /0:0:0:0:0:0:0:1:52868, server: localhost/0:0:0:0:0:0:0:1:2181
+2016-09-20 00:52:05,819 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1400] - Session establishment complete on server localhost/0:0:0:0:0:0:0:1:2181, sessionid = 0x1000041961a0000, negotiated timeout = 30000
 
 WATCHER::
 
@@ -106,22 +105,22 @@ zookeeper
 #### 1. Start ZooKeeper
 
 ```sh
-$ docker run -d -p 2182:2181 --name zookeeper1 mosuka/docker-zookeeper:3.5.1
-98be9f02ca78c27f2de65a03eba13541f5a4c7b649a3c42dbbd1e159f9edc445
+$ docker run -d -p 2182:2181 --name zookeeper1 mosuka/docker-zookeeper:latest
+5303c38042ad650d956d2d2a9fdaf167c9cf87e164ffe66de391f31533118626
 
 $ ZOOKEEPER_1_CONTAINER_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper1)
 $ echo ${ZOOKEEPER_1_CONTAINER_IP}
 172.17.0.2
 
-$ docker run -d -p 2183:2181 --name zookeeper2 -e ZOOKEEPER_SEED_HOST=${ZOOKEEPER_1_CONTAINER_IP} mosuka/docker-zookeeper:3.5.1
-3f4e90c90d7635319deac5756bb21f7c4da4270ebfd0102fc201befdca78a673
+$ docker run -d -p 2183:2181 --name zookeeper2 -e ZOOKEEPER_SEED_HOST=${ZOOKEEPER_1_CONTAINER_IP} mosuka/docker-zookeeper:latest
+fd34a51e2915605ee7707b233335fc0591db33fb8efd7b0876423113dea96406
 
 $ ZOOKEEPER_2_CONTAINER_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper2)
 $ echo ${ZOOKEEPER_2_CONTAINER_IP}
 172.17.0.3
 
-$ docker run -d -p 2184:2181 --name zookeeper3 -e ZOOKEEPER_SEED_HOST=${ZOOKEEPER_2_CONTAINER_IP} mosuka/docker-zookeeper:3.5.1
-a0c84a6d592345208387acb255c10f557b86d9eb7c560e3e8d77ef993d9acf25
+$ docker run -d -p 2184:2181 --name zookeeper3 -e ZOOKEEPER_SEED_HOST=${ZOOKEEPER_2_CONTAINER_IP} mosuka/docker-zookeeper:latest
+00c1edac4d546765384ccb68f6365643868bbcab16fa322f2b5d74629f459f62
 
 $ ZOOKEEPER_3_CONTAINER_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper3)
 $ echo ${ZOOKEEPER_3_CONTAINER_IP}
@@ -132,10 +131,10 @@ $ echo ${ZOOKEEPER_3_CONTAINER_IP}
 
 ```sh
 $ docker ps
-CONTAINER ID        IMAGE                           COMMAND                  CREATED              STATUS              PORTS                                        NAMES
-09f7d69f533d        mosuka/docker-zookeeper:3.5.1   "/usr/local/bin/docke"   28 seconds ago       Up 28 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2184->2181/tcp   zookeeper3
-ce95a9734003        mosuka/docker-zookeeper:3.5.1   "/usr/local/bin/docke"   About a minute ago   Up About a minute   2888/tcp, 3888/tcp, 0.0.0.0:2183->2181/tcp   zookeeper2
-71a97cff24d4        mosuka/docker-zookeeper:3.5.1   "/usr/local/bin/docke"   2 minutes ago        Up 2 minutes        2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper1
+CONTAINER ID        IMAGE                            COMMAND                  CREATED              STATUS              PORTS                                        NAMES
+00c1edac4d54        mosuka/docker-zookeeper:latest   "/usr/local/bin/docke"   24 seconds ago       Up 21 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2184->2181/tcp   zookeeper3
+fd34a51e2915        mosuka/docker-zookeeper:latest   "/usr/local/bin/docke"   56 seconds ago       Up 54 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2183->2181/tcp   zookeeper2
+5303c38042ad        mosuka/docker-zookeeper:latest   "/usr/local/bin/docke"   About a minute ago   Up About a minute   2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper1
 ```
 
 #### 3. Get host IP
@@ -144,7 +143,7 @@ ce95a9734003        mosuka/docker-zookeeper:3.5.1   "/usr/local/bin/docke"   Abo
 $ ZOOKEEPER_HOST_IP=$(docker-machine ip default)
 $ ZOOKEEPER_HOST_IP=${ZOOKEEPER_HOST_IP:-127.0.0.1}
 $ echo ${ZOOKEEPER_HOST_IP}
-192.168.99.100
+127.0.0.1
 
 $ ZOOKEEPER_1_HOST_PORT=$(docker inspect -f '{{ $port := index .NetworkSettings.Ports "2181/tcp" }}{{ range $port }}{{ .HostPort }}{{ end }}' zookeeper1)
 $ echo ${ZOOKEEPER_1_HOST_PORT}
@@ -162,30 +161,30 @@ $ echo ${ZOOKEEPER_3_HOST_PORT}
 #### 4. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
-$ docker exec -i -t zookeeper1 ./zookeeper-3.5.1-alpha/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
-Connecting to 192.168.99.100:2182
-2016-03-23 17:00:37,518 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
-2016-03-23 17:00:37,526 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.230.16
-2016-03-23 17:00:37,526 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.8.0_65
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/Users/mosuka/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/var/folders/99/p369dv7n5sqdl9rdvyx0vqzr0000gn/T/
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Mac OS X
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=x86_64
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=10.11.4
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=mosuka
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/Users/mosuka
-2016-03-23 17:00:37,534 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/Users/mosuka/git/docker-solr
-2016-03-23 17:00:37,534 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=117MB
-2016-03-23 17:00:37,537 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=228MB
-2016-03-23 17:00:37,537 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=123MB
-2016-03-23 17:00:37,543 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=192.168.99.100:2182 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@593634ad
-2016-03-23 17:00:37,614 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@1138] - Opening socket connection to server 192.168.99.100/192.168.99.100:2182. Will not attempt to authenticate using SASL (unknown error)
-2016-03-23 17:00:37,792 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /192.168.99.1:54009, server: 192.168.99.100/192.168.99.100:2182
-2016-03-23 17:00:37,807 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@1400] - Session establishment complete on server 192.168.99.100/192.168.99.100:2182, sessionid = 0x10001a31c770000, negotiated timeout = 30000
+$ docker exec -i -t zookeeper1 ./zookeeper/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
+Connecting to localhost:2181
+2016-09-20 00:55:50,317 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
+2016-09-20 00:55:50,323 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=5303c38042ad
+2016-09-20 00:55:50,324 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.7.0_111
+2016-09-20 00:55:50,326 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
+2016-09-20 00:55:50,327 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/usr/lib/jvm/java-7-openjdk-amd64/jre
+2016-09-20 00:55:50,327 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
+2016-09-20 00:55:50,327 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib
+2016-09-20 00:55:50,328 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/tmp
+2016-09-20 00:55:50,328 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
+2016-09-20 00:55:50,328 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Linux
+2016-09-20 00:55:50,329 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=amd64
+2016-09-20 00:55:50,329 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=4.4.20-moby
+2016-09-20 00:55:50,329 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=zookeeper
+2016-09-20 00:55:50,330 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/home/zookeeper
+2016-09-20 00:55:50,330 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/home/zookeeper
+2016-09-20 00:55:50,330 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=25MB
+2016-09-20 00:55:50,333 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=227MB
+2016-09-20 00:55:50,334 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=30MB
+2016-09-20 00:55:50,338 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=localhost:2181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@28b2311b
+2016-09-20 00:55:50,374 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1138] - Opening socket connection to server localhost/0:0:0:0:0:0:0:1:2181. Will not attempt to authenticate using SASL (unknown error)
+2016-09-20 00:55:50,388 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /0:0:0:0:0:0:0:1:52922, server: localhost/0:0:0:0:0:0:0:1:2181
+2016-09-20 00:55:50,591 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1400] - Session establishment complete on server localhost/0:0:0:0:0:0:0:1:2181, sessionid = 0x100004406e00000, negotiated timeout = 30000
 
 WATCHER::
 
@@ -193,65 +192,32 @@ WatchedEvent state:SyncConnected type:None path:null
 server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
 server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
 server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
-version=200000003
+version=200000002
 
-$ docker exec -i -t zookeeper2 ./zookeeper-3.5.1-alpha/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
-Connecting to 192.168.99.100:2183
-2016-03-23 17:01:07,073 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
-2016-03-23 17:01:07,078 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.230.16
-2016-03-23 17:01:07,078 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.8.0_65
-2016-03-23 17:01:07,081 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/Users/mosuka/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/var/folders/99/p369dv7n5sqdl9rdvyx0vqzr0000gn/T/
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Mac OS X
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=x86_64
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=10.11.4
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=mosuka
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/Users/mosuka
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/Users/mosuka/git/docker-solr
-2016-03-23 17:01:07,084 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=117MB
-2016-03-23 17:01:07,086 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=228MB
-2016-03-23 17:01:07,086 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=123MB
-2016-03-23 17:01:07,090 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=192.168.99.100:2183 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@593634ad
-2016-03-23 17:01:07,141 [myid:] - INFO  [main-SendThread(192.168.99.100:2183):ClientCnxn$SendThread@1138] - Opening socket connection to server 192.168.99.100/192.168.99.100:2183. Will not attempt to authenticate using SASL (unknown error)
-2016-03-23 17:01:07,275 [myid:] - INFO  [main-SendThread(192.168.99.100:2183):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /192.168.99.1:54012, server: 192.168.99.100/192.168.99.100:2183
-2016-03-23 17:01:07,293 [myid:] - INFO  [main-SendThread(192.168.99.100:2183):ClientCnxn$SendThread@1400] - Session establishment complete on server 192.168.99.100/192.168.99.100:2183, sessionid = 0x20001a31c610002, negotiated timeout = 30000
-
-WATCHER::
-
-WatchedEvent state:SyncConnected type:None path:null
-server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
-server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
-server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
-version=200000003
-
-$ docker exec -i -t zookeeper3 ./zookeeper-3.5.1-alpha/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
-Connecting to 192.168.99.100:2184
-2016-03-23 17:01:23,715 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
-2016-03-23 17:01:23,719 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.230.16
-2016-03-23 17:01:23,719 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.8.0_65
-2016-03-23 17:01:23,721 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
-2016-03-23 17:01:23,721 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre
-2016-03-23 17:01:23,721 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/Users/mosuka/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/var/folders/99/p369dv7n5sqdl9rdvyx0vqzr0000gn/T/
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Mac OS X
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=x86_64
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=10.11.4
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=mosuka
-2016-03-23 17:01:23,723 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/Users/mosuka
-2016-03-23 17:01:23,723 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/Users/mosuka/git/docker-solr
-2016-03-23 17:01:23,723 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=117MB
-2016-03-23 17:01:23,725 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=228MB
-2016-03-23 17:01:23,725 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=123MB
-2016-03-23 17:01:23,730 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=192.168.99.100:2184 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@593634ad
-2016-03-23 17:01:23,767 [myid:] - INFO  [main-SendThread(192.168.99.100:2184):ClientCnxn$SendThread@1138] - Opening socket connection to server 192.168.99.100/192.168.99.100:2184. Will not attempt to authenticate using SASL (unknown error)
-2016-03-23 17:01:23,913 [myid:] - INFO  [main-SendThread(192.168.99.100:2184):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /192.168.99.1:54015, server: 192.168.99.100/192.168.99.100:2184
-2016-03-23 17:01:23,937 [myid:] - INFO  [main-SendThread(192.168.99.100:2184):ClientCnxn$SendThread@1400] - Session establishment complete on server 192.168.99.100/192.168.99.100:2184, sessionid = 0x30001a35e820000, negotiated timeout = 30000
+$ docker exec -i -t zookeeper2 ./zookeeper/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
+Connecting to localhost:2181
+2016-09-20 00:56:12,587 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
+2016-09-20 00:56:12,593 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=fd34a51e2915
+2016-09-20 00:56:12,594 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.7.0_111
+2016-09-20 00:56:12,600 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
+2016-09-20 00:56:12,600 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/usr/lib/jvm/java-7-openjdk-amd64/jre
+2016-09-20 00:56:12,601 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
+2016-09-20 00:56:12,602 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib
+2016-09-20 00:56:12,602 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/tmp
+2016-09-20 00:56:12,603 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
+2016-09-20 00:56:12,603 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Linux
+2016-09-20 00:56:12,604 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=amd64
+2016-09-20 00:56:12,604 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=4.4.20-moby
+2016-09-20 00:56:12,605 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=zookeeper
+2016-09-20 00:56:12,606 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/home/zookeeper
+2016-09-20 00:56:12,606 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/home/zookeeper
+2016-09-20 00:56:12,607 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=25MB
+2016-09-20 00:56:12,610 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=227MB
+2016-09-20 00:56:12,611 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=30MB
+2016-09-20 00:56:12,615 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=localhost:2181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@4ab5f87c
+2016-09-20 00:56:12,656 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1138] - Opening socket connection to server localhost/127.0.0.1:2181. Will not attempt to authenticate using SASL (unknown error)
+2016-09-20 00:56:12,674 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /127.0.0.1:50178, server: localhost/127.0.0.1:2181
+2016-09-20 00:56:12,803 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1400] - Session establishment complete on server localhost/127.0.0.1:2181, sessionid = 0x200004405d40000, negotiated timeout = 30000
 
 WATCHER::
 
@@ -259,7 +225,40 @@ WatchedEvent state:SyncConnected type:None path:null
 server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
 server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
 server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
-version=200000003
+version=200000002
+
+$ docker exec -i -t zookeeper3 ./zookeeper/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
+Connecting to localhost:2181
+2016-09-20 00:56:49,795 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
+2016-09-20 00:56:49,800 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=00c1edac4d54
+2016-09-20 00:56:49,801 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.7.0_111
+2016-09-20 00:56:49,806 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
+2016-09-20 00:56:49,807 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/usr/lib/jvm/java-7-openjdk-amd64/jre
+2016-09-20 00:56:49,807 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
+2016-09-20 00:56:49,808 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib
+2016-09-20 00:56:49,808 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/tmp
+2016-09-20 00:56:49,809 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
+2016-09-20 00:56:49,809 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Linux
+2016-09-20 00:56:49,809 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=amd64
+2016-09-20 00:56:49,810 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=4.4.20-moby
+2016-09-20 00:56:49,810 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=zookeeper
+2016-09-20 00:56:49,810 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/home/zookeeper
+2016-09-20 00:56:49,811 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/home/zookeeper
+2016-09-20 00:56:49,811 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=25MB
+2016-09-20 00:56:49,813 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=227MB
+2016-09-20 00:56:49,814 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=30MB
+2016-09-20 00:56:49,817 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=localhost:2181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@28b2311b
+2016-09-20 00:56:49,845 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1138] - Opening socket connection to server localhost/0:0:0:0:0:0:0:1:2181. Will not attempt to authenticate using SASL (unknown error)
+2016-09-20 00:56:49,861 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /0:0:0:0:0:0:0:1:52926, server: localhost/0:0:0:0:0:0:0:1:2181
+2016-09-20 00:56:50,023 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1400] - Session establishment complete on server localhost/0:0:0:0:0:0:0:1:2181, sessionid = 0x300004482ff0000, negotiated timeout = 30000
+
+WATCHER::
+
+WatchedEvent state:SyncConnected type:None path:null
+server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
+server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
+server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
+version=200000002
 ```
 
 #### 5. Stop ZooKeeper
@@ -279,22 +278,22 @@ zookeeper3
 #### 1. Start ZooKeeper
 
 ```sh
-$ docker run -d -p 2182:2181 --name zookeeper1 -e ZOOKEEPER_HOST_LIST="" mosuka/docker-zookeeper:3.5.1
-98be9f02ca78c27f2de65a03eba13541f5a4c7b649a3c42dbbd1e159f9edc445
+$ docker run -d -p 2182:2181 --name zookeeper1 -e ZOOKEEPER_HOST_LIST="" mosuka/docker-zookeeper:latest
+bb7aeb0ef2ddd7635f41fa8bbb660d74678d09caa143eb6de252c525ddc04e75
 
 $ ZOOKEEPER_1_CONTAINER_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper1)
 $ echo ${ZOOKEEPER_1_CONTAINER_IP}
 172.17.0.2
 
-$ docker run -d -p 2183:2181 --name zookeeper2 -e ZOOKEEPER_HOST_LIST="${ZOOKEEPER_1_CONTAINER_IP}" mosuka/docker-zookeeper:3.5.1
-3f4e90c90d7635319deac5756bb21f7c4da4270ebfd0102fc201befdca78a673
+$ docker run -d -p 2183:2181 --name zookeeper2 -e ZOOKEEPER_HOST_LIST="${ZOOKEEPER_1_CONTAINER_IP}" mosuka/docker-zookeeper:latest
+5d72c44b5f487d72b94d6526f8240b166ac8919555054f76e39c7ab3b017b841
 
 $ ZOOKEEPER_2_CONTAINER_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper2)
 $ echo ${ZOOKEEPER_2_CONTAINER_IP}
 172.17.0.3
 
-$ docker run -d -p 2184:2181 --name zookeeper3 -e ZOOKEEPER_HOST_LIST="${ZOOKEEPER_1_CONTAINER_IP} ${ZOOKEEPER_2_CONTAINER_IP}" mosuka/docker-zookeeper:3.5.1
-a0c84a6d592345208387acb255c10f557b86d9eb7c560e3e8d77ef993d9acf25
+$ docker run -d -p 2184:2181 --name zookeeper3 -e ZOOKEEPER_HOST_LIST="${ZOOKEEPER_1_CONTAINER_IP} ${ZOOKEEPER_2_CONTAINER_IP}" mosuka/docker-zookeeper:latest
+110333f712de4c7872c639849de26d30f70515d5b6c9595754035e30cbd7ea0e
 
 $ ZOOKEEPER_3_CONTAINER_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' zookeeper3)
 $ echo ${ZOOKEEPER_3_CONTAINER_IP}
@@ -305,10 +304,10 @@ $ echo ${ZOOKEEPER_3_CONTAINER_IP}
 
 ```sh
 $ docker ps
-CONTAINER ID        IMAGE                           COMMAND                  CREATED              STATUS              PORTS                                        NAMES
-09f7d69f533d        mosuka/docker-zookeeper:3.5.1   "/usr/local/bin/docke"   28 seconds ago       Up 28 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2184->2181/tcp   zookeeper3
-ce95a9734003        mosuka/docker-zookeeper:3.5.1   "/usr/local/bin/docke"   About a minute ago   Up About a minute   2888/tcp, 3888/tcp, 0.0.0.0:2183->2181/tcp   zookeeper2
-71a97cff24d4        mosuka/docker-zookeeper:3.5.1   "/usr/local/bin/docke"   2 minutes ago        Up 2 minutes        2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper1
+CONTAINER ID        IMAGE                            COMMAND                  CREATED              STATUS              PORTS                                        NAMES
+110333f712de        mosuka/docker-zookeeper:latest   "/usr/local/bin/docke"   19 seconds ago       Up 17 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2184->2181/tcp   zookeeper3
+5d72c44b5f48        mosuka/docker-zookeeper:latest   "/usr/local/bin/docke"   42 seconds ago       Up 40 seconds       2888/tcp, 3888/tcp, 0.0.0.0:2183->2181/tcp   zookeeper2
+bb7aeb0ef2dd        mosuka/docker-zookeeper:latest   "/usr/local/bin/docke"   About a minute ago   Up About a minute   2888/tcp, 3888/tcp, 0.0.0.0:2182->2181/tcp   zookeeper1
 ```
 
 #### 3. Get host IP
@@ -317,7 +316,7 @@ ce95a9734003        mosuka/docker-zookeeper:3.5.1   "/usr/local/bin/docke"   Abo
 $ ZOOKEEPER_HOST_IP=$(docker-machine ip default)
 $ ZOOKEEPER_HOST_IP=${ZOOKEEPER_HOST_IP:-127.0.0.1}
 $ echo ${ZOOKEEPER_HOST_IP}
-192.168.99.100
+127.0.0.1
 
 $ ZOOKEEPER_1_HOST_PORT=$(docker inspect -f '{{ $port := index .NetworkSettings.Ports "2181/tcp" }}{{ range $port }}{{ .HostPort }}{{ end }}' zookeeper1)
 $ echo ${ZOOKEEPER_1_HOST_PORT}
@@ -335,30 +334,30 @@ $ echo ${ZOOKEEPER_3_HOST_PORT}
 #### 4. Connect to ZooKeeper using zkCli.sh on the local machine
 
 ```sh
-$ docker exec -i -t zookeeper1 ./zookeeper-3.5.1-alpha/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
-Connecting to 192.168.99.100:2182
-2016-03-23 17:00:37,518 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
-2016-03-23 17:00:37,526 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.230.16
-2016-03-23 17:00:37,526 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.8.0_65
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/Users/mosuka/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
-2016-03-23 17:00:37,532 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/var/folders/99/p369dv7n5sqdl9rdvyx0vqzr0000gn/T/
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Mac OS X
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=x86_64
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=10.11.4
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=mosuka
-2016-03-23 17:00:37,533 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/Users/mosuka
-2016-03-23 17:00:37,534 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/Users/mosuka/git/docker-solr
-2016-03-23 17:00:37,534 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=117MB
-2016-03-23 17:00:37,537 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=228MB
-2016-03-23 17:00:37,537 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=123MB
-2016-03-23 17:00:37,543 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=192.168.99.100:2182 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@593634ad
-2016-03-23 17:00:37,614 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@1138] - Opening socket connection to server 192.168.99.100/192.168.99.100:2182. Will not attempt to authenticate using SASL (unknown error)
-2016-03-23 17:00:37,792 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /192.168.99.1:54009, server: 192.168.99.100/192.168.99.100:2182
-2016-03-23 17:00:37,807 [myid:] - INFO  [main-SendThread(192.168.99.100:2182):ClientCnxn$SendThread@1400] - Session establishment complete on server 192.168.99.100/192.168.99.100:2182, sessionid = 0x10001a31c770000, negotiated timeout = 30000
+$ docker exec -i -t zookeeper1 ./zookeeper/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
+Connecting to localhost:2181
+2016-09-20 01:00:15,961 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
+2016-09-20 01:00:15,965 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=bb7aeb0ef2dd
+2016-09-20 01:00:15,965 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.7.0_111
+2016-09-20 01:00:15,970 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
+2016-09-20 01:00:15,970 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/usr/lib/jvm/java-7-openjdk-amd64/jre
+2016-09-20 01:00:15,971 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
+2016-09-20 01:00:15,971 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib
+2016-09-20 01:00:15,972 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/tmp
+2016-09-20 01:00:15,972 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
+2016-09-20 01:00:15,972 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Linux
+2016-09-20 01:00:15,973 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=amd64
+2016-09-20 01:00:15,973 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=4.4.20-moby
+2016-09-20 01:00:15,973 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=zookeeper
+2016-09-20 01:00:15,974 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/home/zookeeper
+2016-09-20 01:00:15,974 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/home/zookeeper
+2016-09-20 01:00:15,974 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=25MB
+2016-09-20 01:00:15,978 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=227MB
+2016-09-20 01:00:15,978 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=30MB
+2016-09-20 01:00:15,983 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=localhost:2181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@28b2311b
+2016-09-20 01:00:16,013 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1138] - Opening socket connection to server localhost/127.0.0.1:2181. Will not attempt to authenticate using SASL (unknown error)
+2016-09-20 01:00:16,024 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /127.0.0.1:50296, server: localhost/127.0.0.1:2181
+2016-09-20 01:00:16,136 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1400] - Session establishment complete on server localhost/127.0.0.1:2181, sessionid = 0x1000048c0370000, negotiated timeout = 30000
 
 WATCHER::
 
@@ -366,65 +365,32 @@ WatchedEvent state:SyncConnected type:None path:null
 server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
 server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
 server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
-version=200000003
+version=200000002
 
-$ docker exec -i -t zookeeper2 ./zookeeper-3.5.1-alpha/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
-Connecting to 192.168.99.100:2183
-2016-03-23 17:01:07,073 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
-2016-03-23 17:01:07,078 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.230.16
-2016-03-23 17:01:07,078 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.8.0_65
-2016-03-23 17:01:07,081 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/Users/mosuka/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/var/folders/99/p369dv7n5sqdl9rdvyx0vqzr0000gn/T/
-2016-03-23 17:01:07,082 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Mac OS X
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=x86_64
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=10.11.4
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=mosuka
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/Users/mosuka
-2016-03-23 17:01:07,083 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/Users/mosuka/git/docker-solr
-2016-03-23 17:01:07,084 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=117MB
-2016-03-23 17:01:07,086 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=228MB
-2016-03-23 17:01:07,086 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=123MB
-2016-03-23 17:01:07,090 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=192.168.99.100:2183 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@593634ad
-2016-03-23 17:01:07,141 [myid:] - INFO  [main-SendThread(192.168.99.100:2183):ClientCnxn$SendThread@1138] - Opening socket connection to server 192.168.99.100/192.168.99.100:2183. Will not attempt to authenticate using SASL (unknown error)
-2016-03-23 17:01:07,275 [myid:] - INFO  [main-SendThread(192.168.99.100:2183):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /192.168.99.1:54012, server: 192.168.99.100/192.168.99.100:2183
-2016-03-23 17:01:07,293 [myid:] - INFO  [main-SendThread(192.168.99.100:2183):ClientCnxn$SendThread@1400] - Session establishment complete on server 192.168.99.100/192.168.99.100:2183, sessionid = 0x20001a31c610002, negotiated timeout = 30000
-
-WATCHER::
-
-WatchedEvent state:SyncConnected type:None path:null
-server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
-server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
-server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
-version=200000003
-
-$ docker exec -i -t zookeeper3 ./zookeeper-3.5.1-alpha/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
-Connecting to 192.168.99.100:2184
-2016-03-23 17:01:23,715 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
-2016-03-23 17:01:23,719 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=172.24.230.16
-2016-03-23 17:01:23,719 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.8.0_65
-2016-03-23 17:01:23,721 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
-2016-03-23 17:01:23,721 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/jre
-2016-03-23 17:01:23,721 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/Users/mosuka/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/Users/mosuka/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/var/folders/99/p369dv7n5sqdl9rdvyx0vqzr0000gn/T/
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Mac OS X
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=x86_64
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=10.11.4
-2016-03-23 17:01:23,722 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=mosuka
-2016-03-23 17:01:23,723 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/Users/mosuka
-2016-03-23 17:01:23,723 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/Users/mosuka/git/docker-solr
-2016-03-23 17:01:23,723 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=117MB
-2016-03-23 17:01:23,725 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=228MB
-2016-03-23 17:01:23,725 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=123MB
-2016-03-23 17:01:23,730 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=192.168.99.100:2184 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@593634ad
-2016-03-23 17:01:23,767 [myid:] - INFO  [main-SendThread(192.168.99.100:2184):ClientCnxn$SendThread@1138] - Opening socket connection to server 192.168.99.100/192.168.99.100:2184. Will not attempt to authenticate using SASL (unknown error)
-2016-03-23 17:01:23,913 [myid:] - INFO  [main-SendThread(192.168.99.100:2184):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /192.168.99.1:54015, server: 192.168.99.100/192.168.99.100:2184
-2016-03-23 17:01:23,937 [myid:] - INFO  [main-SendThread(192.168.99.100:2184):ClientCnxn$SendThread@1400] - Session establishment complete on server 192.168.99.100/192.168.99.100:2184, sessionid = 0x30001a35e820000, negotiated timeout = 30000
+$ docker exec -i -t zookeeper2 ./zookeeper/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
+Connecting to localhost:2181
+2016-09-20 01:00:34,676 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
+2016-09-20 01:00:34,681 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=5d72c44b5f48
+2016-09-20 01:00:34,682 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.7.0_111
+2016-09-20 01:00:34,687 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
+2016-09-20 01:00:34,688 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/usr/lib/jvm/java-7-openjdk-amd64/jre
+2016-09-20 01:00:34,689 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
+2016-09-20 01:00:34,690 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib
+2016-09-20 01:00:34,690 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/tmp
+2016-09-20 01:00:34,692 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
+2016-09-20 01:00:34,693 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Linux
+2016-09-20 01:00:34,694 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=amd64
+2016-09-20 01:00:34,695 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=4.4.20-moby
+2016-09-20 01:00:34,696 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=zookeeper
+2016-09-20 01:00:34,696 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/home/zookeeper
+2016-09-20 01:00:34,697 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/home/zookeeper
+2016-09-20 01:00:34,697 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=25MB
+2016-09-20 01:00:34,700 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=227MB
+2016-09-20 01:00:34,701 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=30MB
+2016-09-20 01:00:34,707 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=localhost:2181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@28b2311b
+2016-09-20 01:00:34,737 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1138] - Opening socket connection to server localhost/127.0.0.1:2181. Will not attempt to authenticate using SASL (unknown error)
+2016-09-20 01:00:34,754 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /127.0.0.1:50298, server: localhost/127.0.0.1:2181
+2016-09-20 01:00:34,867 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1400] - Session establishment complete on server localhost/127.0.0.1:2181, sessionid = 0x2000048bf5e0000, negotiated timeout = 30000
 
 WATCHER::
 
@@ -432,7 +398,40 @@ WatchedEvent state:SyncConnected type:None path:null
 server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
 server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
 server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
-version=200000003
+version=200000002
+
+$ docker exec -i -t zookeeper3 ./zookeeper/bin/zkCli.sh -server localhost:2181 get /zookeeper/config
+Connecting to localhost:2181
+2016-09-20 01:00:55,312 [myid:] - INFO  [main:Environment@109] - Client environment:zookeeper.version=3.5.1-alpha-1693007, built on 07/28/2015 07:19 GMT
+2016-09-20 01:00:55,316 [myid:] - INFO  [main:Environment@109] - Client environment:host.name=110333f712de
+2016-09-20 01:00:55,316 [myid:] - INFO  [main:Environment@109] - Client environment:java.version=1.7.0_111
+2016-09-20 01:00:55,321 [myid:] - INFO  [main:Environment@109] - Client environment:java.vendor=Oracle Corporation
+2016-09-20 01:00:55,322 [myid:] - INFO  [main:Environment@109] - Client environment:java.home=/usr/lib/jvm/java-7-openjdk-amd64/jre
+2016-09-20 01:00:55,322 [myid:] - INFO  [main:Environment@109] - Client environment:java.class.path=/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/classes:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../build/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-log4j12-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/slf4j-api-1.7.5.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/servlet-api-2.5-20081211.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/netty-3.7.0.Final.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/log4j-1.2.16.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jline-2.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-util-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jetty-6.1.26.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/javacc.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-mapper-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/jackson-core-asl-1.9.11.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../lib/commons-cli-1.2.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../zookeeper-3.5.1-alpha.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../src/java/lib/*.jar:/home/zookeeper/zookeeper-3.5.1-alpha/bin/../conf:
+2016-09-20 01:00:55,323 [myid:] - INFO  [main:Environment@109] - Client environment:java.library.path=/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib
+2016-09-20 01:00:55,323 [myid:] - INFO  [main:Environment@109] - Client environment:java.io.tmpdir=/tmp
+2016-09-20 01:00:55,324 [myid:] - INFO  [main:Environment@109] - Client environment:java.compiler=<NA>
+2016-09-20 01:00:55,324 [myid:] - INFO  [main:Environment@109] - Client environment:os.name=Linux
+2016-09-20 01:00:55,324 [myid:] - INFO  [main:Environment@109] - Client environment:os.arch=amd64
+2016-09-20 01:00:55,325 [myid:] - INFO  [main:Environment@109] - Client environment:os.version=4.4.20-moby
+2016-09-20 01:00:55,325 [myid:] - INFO  [main:Environment@109] - Client environment:user.name=zookeeper
+2016-09-20 01:00:55,325 [myid:] - INFO  [main:Environment@109] - Client environment:user.home=/home/zookeeper
+2016-09-20 01:00:55,326 [myid:] - INFO  [main:Environment@109] - Client environment:user.dir=/home/zookeeper
+2016-09-20 01:00:55,326 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.free=25MB
+2016-09-20 01:00:55,330 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.max=227MB
+2016-09-20 01:00:55,330 [myid:] - INFO  [main:Environment@109] - Client environment:os.memory.total=30MB
+2016-09-20 01:00:55,337 [myid:] - INFO  [main:ZooKeeper@716] - Initiating client connection, connectString=localhost:2181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@28b2311b
+2016-09-20 01:00:55,363 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1138] - Opening socket connection to server localhost/0:0:0:0:0:0:0:1:2181. Will not attempt to authenticate using SASL (unknown error)
+2016-09-20 01:00:55,376 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@980] - Socket connection established, initiating session, client: /0:0:0:0:0:0:0:1:53046, server: localhost/0:0:0:0:0:0:0:1:2181
+2016-09-20 01:00:55,521 [myid:] - INFO  [main-SendThread(localhost:2181):ClientCnxn$SendThread@1400] - Session establishment complete on server localhost/0:0:0:0:0:0:0:1:2181, sessionid = 0x300004920e00000, negotiated timeout = 30000
+
+WATCHER::
+
+WatchedEvent state:SyncConnected type:None path:null
+server.1=172.17.0.2:2888:3888:participant;0.0.0.0:2181
+server.2=172.17.0.3:2888:3888:participant;0.0.0.0:2181
+server.3=172.17.0.4:2888:3888:participant;0.0.0.0:2181
+version=200000002
 ```
 
 #### 5. Stop ZooKeeper
