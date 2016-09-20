@@ -29,7 +29,7 @@ RUN apt-get update && \
     groupadd -r ${ZOOKEEPER_GROUP} && \
     useradd -u ${ZOOKEEPER_UID} -g ${ZOOKEEPER_GROUP} -d ${HOME} ${ZOOKEEPER_USER} && \
     chown -R ${ZOOKEEPER_USER}:${ZOOKEEPER_GROUP} ${HOME}
- 
+
 USER ${ZOOKEEPER_USER}
 WORKDIR ${HOME}
 
